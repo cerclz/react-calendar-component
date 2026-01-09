@@ -1,70 +1,84 @@
-# Getting Started with Create React App
+# Weekly calendar (React)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project started as a part of another application I had already built and was actively using.
 
-## Available Scripts
+That app needed a weekly view that made sense on a phone and could deal with real times, not just neat 30-minute blocks.
 
-In the project directory, you can run:
+This is not meant to be a generic calendar library and it’s definitely not a tutorial project.  
+It’s just a piece of UI that had to exist for a real application, cleaned up enough to live on its own.
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## What it does
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Shows a weekly view.
+- Renders an hour-by-hour vertical grid.
+- Places tasks as blocks based on their actual start and end time.
+- Daily render by default on mobile. 
+  (for example: 09:13 → 10:34)
 
-### `npm test`
+Times are calculated in minutes. Nothing is rounded to make the layout easier.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## Mobile first, because that’s where it’s used
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The main use case is mobile.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+The layout was designed on a small screen first and then stretched for larger ones, not the other way around.  
+Scrolling, spacing, and touch targets were adjusted based on actual use, not mockups.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## Tasks and structure
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Tasks can belong to categories.  
+Categories are mostly a visual thing right now, but the structure is there to build on top of it.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+The calendar itself doesn’t care where tasks come from.  
+In the original app, task creation sometimes opens other forms from different parts of the system.  
+That constraint shaped how this component is structured.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Week navigation
 
-## Learn More
+Weeks can be changed programmatically.  
+There’s no strong coupling to a date picker or a specific UI for selecting ranges.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+The idea was to keep date logic boring and predictable.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## Why there is no calendar library here
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+I needed:
+- full control over layout
+- predictable time calculations
+- something that wouldn’t break the moment I changed the data shape
 
-### Analyzing the Bundle Size
+Writing the core logic myself ended up being simpler than fighting a black box.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+---
 
-### Making a Progressive Web App
+## Tech notes
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- React
+- Plain CSS (Grid / Flexbox)
+- No heavy date abstractions
 
-### Advanced Configuration
+The code favors clarity over cleverness.  
+If something looks “manual”, it probably is — on purpose.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
+## Status
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Still evolving.  
+Changes usually come from actual needs in the app this was built for.
 
-### `npm run build` fails to minify
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## License
+
+MIT
