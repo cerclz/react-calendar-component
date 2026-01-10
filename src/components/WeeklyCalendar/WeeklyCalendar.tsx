@@ -1,0 +1,48 @@
+import { useMemo, useState } from "react"
+import type { CalendarTask } from "./types"
+import { buildCalendarWeek, buildCalendarDay, addDays } from "./buildCalendar"
+import { CalendarHeader } from "./CalendarHeader"
+import CalendarGrid from "./CalendarGrid"
+
+type ViewMode = "day" | "week"
+type Props = {
+    tasks: CalendarTask[]
+}
+
+export function WeeklyCalendar({ tasks }: Props) {
+
+    const [viewMode, setViewMode] = useState<ViewMode>("week")
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+
+    const week = useMemo(() => buildCalendarWeek(selectedDate, tasks), [selectedDate, tasks])
+    const day = useMemo(() => buildCalendarDay(selectedDate, tasks), [selectedDate, tasks])
+
+    const today = () => setSelectedDate(new Date())
+
+    // Go prev day if view mode is day else go prev week
+    const goPrev = () => setSelectedDate(d => (viewMode === "day" ? addDays(d, -1) : addDays(d, -7)))
+
+    // Go next day if view mode is day else go next week
+    const goNext = () => setSelectedDate(d => (viewMode === "day" ? addDays(d, +1) : addDays(d, 7)))
+
+    return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <CalendarHeader
+                viewMode={viewMode}
+                onViewModeChange={setViewMode}
+                onPrev={goPrev}
+                onNext={goNext}
+                today={today}
+                title={viewMode === "day" ? day.isoDate : `${week.days[0].isoDate} -> ${week.days[6].isoDate}`}
+            />
+
+            {viewMode === "week" ? (
+                <CalendarGrid week={week} />
+            ) : (
+                // <DayView day={day} />
+                <p>DayView</p>
+            )}
+
+        </div>
+    )
+}
