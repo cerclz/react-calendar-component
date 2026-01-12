@@ -3,6 +3,7 @@ import type { CalendarTask } from "./types"
 import { buildCalendarWeek, buildCalendarDay, addDays } from "./buildCalendar"
 import { CalendarHeader } from "./CalendarHeader"
 import CalendarGrid from "./CalendarGrid"
+import { DayView } from "./DayView"
 
 type ViewMode = "day" | "week"
 type Props = {
@@ -40,7 +41,7 @@ export function WeeklyCalendar({ tasks }: Props) {
                 <CalendarGrid week={week} />
             ) : (
                 // <DayView day={day} />
-                <p>DayView</p>
+                <DayView day={day} />
             )}
 
         </div>
