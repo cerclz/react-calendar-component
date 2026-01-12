@@ -1,5 +1,6 @@
 // CalendarGrid.tsx
 import type { CalendarWeek } from "./types"
+import { getCurrentDay, isToday } from "./date.utils"
 
 type Props = { week: CalendarWeek }
 
@@ -8,21 +9,22 @@ const CalendarGrid = ({ week }: Props) => {
         <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(7, 1fr)",
-            gap: 8
+            gap: 0
         }}>
             {week.days.map(day => (
                 <div
                     key={day.isoDate}
                     style={{
                         border: "1px solid #ddd",
-                        borderRadius: 12,
                         padding: 10,
                         minHeight: 220,
                     }}
                 >
-                    <div style={{ fontWeight: 700, marginBottom: 8 }}>{day.isoDate}</div>
+                    <div style={{ fontWeight: 700, marginBottom: 8, textAlign: "center" }}>{day.date.getDate()}</div>
+                    <div style={{ fontWeight: 700, marginBottom: 8, textAlign: "center" }}>{getCurrentDay(day.date.getDay())}</div>
 
-                    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+
+                    <div style={{ display: "flex", flexDirection: "column" }}>
                         {day.tasks.length === 0 ? (
                             <div style={{ opacity: 0.5, fontSize: 12 }}> No tasks </div>
                         ) : (

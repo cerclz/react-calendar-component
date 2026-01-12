@@ -21,3 +21,9 @@ export type CalendarWeek = {
   range: { start: Date; end: Date }
   days: CalendarDay[]
 }
+
+export type TimeColumnProps = {
+  startHour?: number
+  endHour?: number
+  stepMinutes?: number
+}

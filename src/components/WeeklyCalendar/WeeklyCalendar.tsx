@@ -4,6 +4,8 @@ import { buildCalendarWeek, buildCalendarDay, addDays } from "./buildCalendar"
 import { CalendarHeader } from "./CalendarHeader"
 import CalendarGrid from "./CalendarGrid"
 import { DayView } from "./DayView"
+import { TimeColumn } from "./TimeColumn"
+import { getCurrentMonth } from "./date.utils"
 
 type ViewMode = "day" | "week"
 type Props = {
@@ -17,6 +19,7 @@ export function WeeklyCalendar({ tasks }: Props) {
 
     const week = useMemo(() => buildCalendarWeek(selectedDate, tasks), [selectedDate, tasks])
     const day = useMemo(() => buildCalendarDay(selectedDate, tasks), [selectedDate, tasks])
+    console.log(selectedDate.getMonth)
 
     const today = () => setSelectedDate(new Date())
 
@@ -34,11 +37,15 @@ export function WeeklyCalendar({ tasks }: Props) {
                 onPrev={goPrev}
                 onNext={goNext}
                 today={today}
-                title={viewMode === "day" ? day.isoDate : `${week.days[0].isoDate} -> ${week.days[6].isoDate}`}
+                title={getCurrentMonth(selectedDate.getMonth()) + ` ${selectedDate.getFullYear()}`}
+                // title={viewMode === "day" ? day.isoDate : `${week.days[0].isoDate} -> ${week.days[6].isoDate}`}
             />
 
             {viewMode === "week" ? (
-                <CalendarGrid week={week} />
+                <div style={{ display: "grid", gridTemplateColumns: "56px 1fr" }}>
+                    <TimeColumn />
+                    <CalendarGrid week={week} />
+                </div>
             ) : (
                 // <DayView day={day} />
                 <DayView day={day} />
