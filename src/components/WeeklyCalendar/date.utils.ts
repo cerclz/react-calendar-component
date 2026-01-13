@@ -7,7 +7,7 @@ export function getCurrentMonth(m: number) {
 }
 
 export function getCurrentDay(d: number) {
-    const months = ["Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο", "Κυριακή"]
+    const months = ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"]
 
     return months[d]
 }
