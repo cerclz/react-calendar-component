@@ -19,7 +19,6 @@ export function WeeklyCalendar({ tasks }: Props) {
 
     const week = useMemo(() => buildCalendarWeek(selectedDate, tasks), [selectedDate, tasks])
     const day = useMemo(() => buildCalendarDay(selectedDate, tasks), [selectedDate, tasks])
-    console.log(selectedDate.getMonth)
 
     const today = () => setSelectedDate(new Date())
 

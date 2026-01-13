@@ -6,22 +6,22 @@ type Props = { week: CalendarWeek }
 
 const CalendarGrid = ({ week }: Props) => {
 
-    const hours = Array.from({ length: 17 }, (_, i) => 17 + i)
+    const hours = Array.from({ length: 16 }, (_, i) => 16 + i)
+
+    console.log(week)
 
     return (
         <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(7, 1fr)",
             gap: 0,
-            overflowY: "scroll",
-            height: "100vh"
+            border: "1px solid #ddd",
+
         }}>
             {week.days.map(day => (
                 <div
                     key={day.isoDate}
                     style={{
-                        border: "1px solid #ddd",
-                        minHeight: 220,
                     }}
                 >
                     <div style={{ fontWeight: 700, marginBottom: 8, textAlign: "center" }}>{day.date.getDate()}</div>

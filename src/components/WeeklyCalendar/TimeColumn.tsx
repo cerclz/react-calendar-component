@@ -9,7 +9,7 @@ export function TimeColumn({ startHour = 7, endHour = 22, stepMinutes = 60 }: Ti
     }
 
     return (
-        <div style={{ position: "sticky", left: 0 }}>
+        <div style={{ position: "sticky", left: 0, gridTemplateRows: `repeat(${hours.length}, 20)`, marginTop: 120 }}>
             {hours.map(hour => (
                 <div style={{fontSize: "16px", height: "var(--hour-height)"}} key={hour}>
                     {hour}
