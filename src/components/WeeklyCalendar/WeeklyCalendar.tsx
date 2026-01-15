@@ -6,16 +6,35 @@ import CalendarGrid from "./CalendarGrid"
 import { DayView } from "./DayView"
 import { TimeColumn } from "./TimeColumn"
 import { getCurrentMonth } from "./date.utils"
+import { CreateTaskModal } from "./CreateTaskModal"
 
 type ViewMode = "day" | "week"
 type Props = {
     tasks: CalendarTask[]
 }
 
+type Slot = {
+    isoDate: string,
+    hour: number
+}
+
 export function WeeklyCalendar({ tasks }: Props) {
 
     const [viewMode, setViewMode] = useState<ViewMode>("week")
     const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [selectedSlot, setSelectedSlot] = useState<Slot | null> (null)
+
+    const openCreateModal = (slot: Slot) => {
+        setSelectedSlot(slot)
+        setIsModalOpen(true)
+    }
+
+    const closeCreateModal = () => {
+        setIsModalOpen(false)
+        setSelectedSlot(null)
+    }
 
     const week = useMemo(() => buildCalendarWeek(selectedDate, tasks), [selectedDate, tasks])
     const day = useMemo(() => buildCalendarDay(selectedDate, tasks), [selectedDate, tasks])
@@ -43,7 +62,9 @@ export function WeeklyCalendar({ tasks }: Props) {
             {viewMode === "week" ? (
                 <div style={{ display: "grid", gridTemplateColumns: "56px 1fr" }}>
                     <TimeColumn />
-                    <CalendarGrid week={week} />
+                    <CalendarGrid week={week} onSlotClick={openCreateModal}/>
+
+                    <CreateTaskModal open={isModalOpen} slot={selectedSlot} onClose={closeCreateModal}/>
                 </div>
             ) : (
                 // <DayView day={day} />

@@ -13,5 +13,43 @@ code {
 }
 
 :root {
-    --hour-height: 60px;
+  --hour-height: 60px;
+}
+
+input {
+  border: none;
+  border-radius: 20px;
+  margin: 10px 0px 0px 0px;
+  padding: 10px;
+}
+
+select {
+  border: none !important;
+  padding: 10px;
+  border-radius: 20px;
+
+}
+
+select:focus {
+  border: none !important;
+  outline: none;
+  background-color: rgb(202, 202, 202);
+}
+
+select:hover {
+  border: none !important;
+  background-color: rgb(226, 226, 226);
+  outline: none;
+}
+
+input:focus {
+  border: none !important;
+  background-color: rgb(202, 202, 202);
+  outline: none;
+}
+
+input:hover {
+  border: none !important;
+  background-color: rgb(226, 226, 226);
+  outline: none;
 }

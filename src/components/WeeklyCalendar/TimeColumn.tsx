@@ -1,20 +1,26 @@
 // TimeColumn.tsx
-import { TimeColumnProps } from "./types";
+import { GRID_ROWS, START_HOUR, TOTAL_SLOTS } from "./calendarConfig";
 
-export function TimeColumn({ startHour = 7, endHour = 22, stepMinutes = 60 }: TimeColumnProps) {
-    const hours = []
-
-    for (let i = startHour; i <= endHour; i++) {
-        hours.push(`${String(i).padStart(2, '0')}:00`)
-    }
+export function TimeColumn() {
 
     return (
-        <div style={{ position: "sticky", left: 0, gridTemplateRows: `repeat(${hours.length}, 20)`, marginTop: 120 }}>
-            {hours.map(hour => (
-                <div style={{fontSize: "16px", height: "var(--hour-height)"}} key={hour}>
-                    {hour}
-                </div>
-            ))}
+        <div style={{ display: "grid", gridTemplateRows: GRID_ROWS }}>
+            <div /> {/* 1ο row: spacer για να ταιριάξει με το header του CalendarGrid */}
+
+            {Array.from({ length: TOTAL_SLOTS }).map((_, i) => {
+                const hour = START_HOUR + i
+
+                return (
+                    <div
+                        key={i}
+                        style={{ borderBottom: "1px solid #ddd", position: "relative" }}
+                    >
+                        <div style={{ position: "absolute", top: 0, right: 6, fontSize: 12, color: "#666" }}>
+                            {String(hour).padStart(2, "0")}:00
+                        </div>
+                    </div>
+                )
+            })}
         </div>
     )
 }
