@@ -1,7 +1,8 @@
 // CalendarGrid.tsx
-import type { CalendarWeek } from "./types"
+import type { CalendarTask, CalendarWeek } from "./types"
 import { getCurrentDay, isToday } from "./date.utils"
-import { GRID_ROWS, HEADER_HEIGHT, START_HOUR, TOTAL_SLOTS } from "./calendarConfig"
+import { GRID_ROWS, HEADER_HEIGHT, SLOT_HEIGHT, START_HOUR, TOTAL_SLOTS } from "./calendarConfig"
+import { TaskBlock } from "./TaskBlock"
 
 type Props = { week: CalendarWeek, onSlotClick: (slot: { isoDate: string, hour: number }) => void }
 
@@ -46,53 +47,71 @@ const CalendarGrid = ({ week, onSlotClick }: Props) => {
 
             {/* Slots (rows 2..TOTAL_SLOTS+1) */}
             {week.days.map((day: any, dayIndex: number) =>
-                Array.from({ length: TOTAL_SLOTS }).map((_, slotIndex) => {
-                    const gridRow = 2 + slotIndex
-                    const hour = START_HOUR + slotIndex
+                <div
+                    key={day.isoDate}
+                    style={{
+                        gridColumn: dayIndex + 1,
+                        gridRow: `2 / span ${TOTAL_SLOTS}`, // αν έχεις header row
+                        position: "relative",
+                        width: "100%",
+                        height: "100%",
+                    }}
+                >
+                    <div style={{
+                        display: "grid",
+                        gridTemplateRows: `repeat(${TOTAL_SLOTS}, ${SLOT_HEIGHT}px)`,
+                        width: "100%",
+                        height: "100%",
+                    }}>
+                        {Array.from({ length: TOTAL_SLOTS }).map((_, slotIndex) => {
+                            const gridRow = 2 + slotIndex
+                            const hour = START_HOUR + slotIndex
 
+                            return (
+                                <button
+                                    key={`${day.isoDate}-${slotIndex}`}
+                                    type="button"
+                                    onClick={() => onSlotClick({ isoDate: day.isoDate, hour })}
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        padding: 0,
+                                        margin: 0,
+                                        cursor: "pointer",
+                                        textAlign: "left",
+                                        boxSizing: "border-box",
+                                        display: "block",
+                                        lineHeight: 0,
+                                        border: "none",
+                                        borderBottom: "1px solid #e2e2e2",
+                                        /* ⬇️ μόνο αν ΔΕΝ είναι πρώτη στήλη */
+                                        borderLeft: dayIndex === 0 ? "none" : "1px solid #e2e2e2",
 
-                    return (
-                        <button
-                            key={`${day.isoDate}-${slotIndex}`}
-                            type="button"
-                            onClick={() => onSlotClick({ isoDate: day.isoDate, hour })}
-                            style={{
-                                gridColumn: dayIndex + 1,
-                                gridRow,
-                                width: "100%",
-                                height: "100%",
-                                padding: 0,
-                                margin: 0,
-                                cursor: "pointer",
-                                textAlign: "left",
-                                boxSizing: "border-box",
-                                display: "block",
-                                lineHeight: 0,
-                                border: "none",
-                                borderBottom: "1px solid #e2e2e2",
-                                /* ⬇️ μόνο αν ΔΕΝ είναι πρώτη στήλη */
-                                borderLeft: dayIndex === 0 ? "none" : "1px solid #e2e2e2",
+                                        /* ⬇️ μόνο αν είναι τελευταία στήλη */
+                                        borderRight:
+                                            dayIndex === week.days.length - 1
+                                                ? "1px solid #e2e2e2"
+                                                : "none",
 
-                                /* ⬇️ μόνο αν είναι τελευταία στήλη */
-                                borderRight:
-                                    dayIndex === week.days.length - 1
-                                        ? "1px solid #e2e2e2"
-                                        : "none",
+                                        /* ⬇️ μόνο αν είναι πρώτη ώρα */
+                                        borderTop:
+                                            hour === START_HOUR
+                                                ? "1px solid #e2e2e2"
+                                                : "none",
+                                        backgroundColor: "#fff",
+                                    }}
+                                >
+                                </button>
 
-                                /* ⬇️ μόνο αν είναι πρώτη ώρα */
-                                borderTop:
-                                    hour === START_HOUR
-                                        ? "1px solid #e2e2e2"
-                                        : "none",
-                                backgroundColor: "#fff",
-                            }}
-                        >
-
-                            {`${day.isoDate}   Ωρα:${slotIndex}`}
-                        </button>
-
-                    )
-                })
+                            )
+                        })}
+                    </div>
+                    <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+                        {day.tasks && day.tasks.map((task: CalendarTask) => (
+                            <TaskBlock task={task} />
+                        ))}
+                    </div>
+                </div>
             )}
         </div>
     )

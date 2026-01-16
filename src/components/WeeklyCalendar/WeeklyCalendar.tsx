@@ -39,6 +39,8 @@ export function WeeklyCalendar({ tasks }: Props) {
     const week = useMemo(() => buildCalendarWeek(selectedDate, tasks), [selectedDate, tasks])
     const day = useMemo(() => buildCalendarDay(selectedDate, tasks), [selectedDate, tasks])
 
+    console.log(week)
+
     const today = () => setSelectedDate(new Date())
 
     // Go prev day if view mode is day else go prev week

@@ -6,21 +6,36 @@ const tasks = [
   {
     id: "1",
     title: "Gym",
-    date: "2026-01-10",
-    start: 9 * 60 + 15,
-    end: 10 * 60 + 30,
+    date: "2026-01-13",
+    start: 9,
+    startM: 45,
+    end: 10,
+    endM: 30,
     category: "Health",
     comments: "Leg day",
   },
   {
     id: "2",
     title: "Client call",
-    date: "2026-01-10",
-    start: 12 * 60,
-    end: 12 * 60 + 45,
+    date: "2026-01-14",
+    start: 12,
+    startM: 0,
+    end: 13,
+    endM: 0,
     category: "Work",
     comments: "",
   },
+  {
+    id: "3",
+    title: "Client call 2",
+    date: "2026-01-14",
+    start: 13,
+    startM: 10,
+    end: 15,
+    endM: 30,
+    category: "Work",
+    comments: "",
+  }
 ]
 
 function App() {

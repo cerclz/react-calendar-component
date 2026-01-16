@@ -5,8 +5,10 @@ export type CalendarTask = {
     id: string
     title: string
     date: string
-    start: number // HH:MM convertion to number
-    end: number // HH:MM convertion to number
+    start: number
+    startM: number 
+    end: number 
+    endM: number 
     category: string
     comments: string
 }
