@@ -1,19 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
+import { CalendarTask } from "./types";
 
 type Slot = { isoDate: string; hour: number } | null
 
-type Props = { open: boolean, slot: Slot, onClose: () => void }
+type Props = { open: boolean, slot: Slot, onClose: () => void, mode: "create" | "edit", formData: CalendarTask, handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void }
 
-export function CreateTaskModal({ open, slot, onClose }: Props) {
-
-    // Set times based on the clicked slot
-    const defaultTimes = useMemo(() => {
-        if (!slot) return null
-
-        const start = new Date(`${slot.isoDate}T${String(slot.hour).padStart(2, "0")}:00:00`)
-        const end = new Date(start.getTime() + 60 * 60 * 1000)
-        return { start, end }
-    }, [slot])
+export function CreateTaskModal({ open, slot, onClose, mode, formData, handleChange }: Props) {
 
     // Generate options for the select start and end forms
     let minutes = []
@@ -27,6 +19,10 @@ export function CreateTaskModal({ open, slot, onClose }: Props) {
     }
 
     if (!open) return null
+
+    const isEdit = mode == "edit"
+
+
 
     return (
         <div
@@ -43,7 +39,7 @@ export function CreateTaskModal({ open, slot, onClose }: Props) {
             <div
                 onClick={(e) => e.stopPropagation()}
                 style={{
-                    width: "min(620px, 100%",
+                    width: "min(510px, 100%",
                     background: "white",
                     borderRadius: 12,
                     padding: 16,
@@ -51,59 +47,64 @@ export function CreateTaskModal({ open, slot, onClose }: Props) {
                 }}
             >
                 <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-                    <div style={{ fontWeight: 800, fontSize: 18 }}>Νέο task</div>
+                    <div style={{ fontWeight: 800, fontSize: 18 }}>{isEdit ? formData.title : "Νέο task"}</div>
                     <button onClick={onClose} style={{ border: 0, background: "transparent", cursor: "pointer" }}>
                         ✕
                     </button>
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column" }}>
-                    <input type="text" placeholder="Προσθήκη Τίτλου"></input>
+                    <input name="title" type="text" placeholder="Προσθήκη Τίτλου" value={formData.title} onChange={handleChange}></input>
 
                     <div style={{ flexDirection: "row" }}>
                         <input
                             type="date"
+                            name="date"
+                            value={formData.date}
+                            onChange={handleChange}
                         >
 
                         </input>
 
-                        <select defaultValue={slot?.hour}>
+                        <select name="start" value={String(formData?.start).padStart(2, "0")} onChange={handleChange}>
                             {hours.map((h) =>
                                 <option>{h}</option>
                             )}
                         </select>
 
-                        <select>
+                        <select name="startM" value={String(formData?.startM).padStart(2, "0")} onChange={handleChange}>
                             {minutes.map((m) =>
                                 <option>{m}</option>
                             )}
                         </select>
 
                         Έως
-                        <input
-                            type="date"
-                        >
+                        <div>
+                            <input
+                                type="date"
+                            >
 
-                        </input>
+                            </input>
 
-                        <select defaultValue={slot?.hour}>
-                            {hours.map((h) =>
-                                <option>{h}</option>
-                            )}
-                        </select>
+                            <select name="end" value={String(formData?.end).padStart(2, "0")} onChange={handleChange}>
+                                {hours.map((h) =>
+                                    <option>{h}</option>
+                                )}
+                            </select>
 
-                        <select>
-                            {minutes.map((m) =>
-                                <option>{m}</option>
-                            )}
-                        </select>
+                            <select name="endM" value={String(formData?.endM).padStart(2, "0")} onChange={handleChange}>
+                                {minutes.map((m) =>
+                                    <option>{m}</option>
+                                )}
+                            </select>
+                        </div>
                     </div>
 
                     <select>
                         <option>Επιλογή Κατηγορίας</option>
                     </select>
 
-                    <input list="ice-cream-flavors" id="ice-cream-choice" name="ice-cream-choice" placeholder="Αναζήτηση Καταστήματος" />
+                    <input list="ice-cream-flavors" id="ice-cream-choice" name="" placeholder="Αναζήτηση Καταστήματος" onChange={handleChange} />
 
                     <datalist id="ice-cream-flavors">
                         <option value="Chocolate"></option>
@@ -114,8 +115,21 @@ export function CreateTaskModal({ open, slot, onClose }: Props) {
                     </datalist>
 
                 </div>
+                {isEdit ?
+                    <>
+                        <button>Ενημέρωση</button>
+                        <button>Διαγραφή</button>
+                        <button>Ακύρωση</button>
+                    </>
+                    :
+                    <>
+                        <button>Αποθήκευση</button>
+                        <button>Ακύρωση</button>
+                    </>
+                }
 
             </div>
+
 
         </div>
     )

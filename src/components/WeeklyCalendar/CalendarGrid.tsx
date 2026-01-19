@@ -4,9 +4,9 @@ import { getCurrentDay, isToday } from "./date.utils"
 import { GRID_ROWS, HEADER_HEIGHT, SLOT_HEIGHT, START_HOUR, TOTAL_SLOTS } from "./calendarConfig"
 import { TaskBlock } from "./TaskBlock"
 
-type Props = { week: CalendarWeek, onSlotClick: (slot: { isoDate: string, hour: number }) => void }
+type Props = { week: CalendarWeek, onSlotClick: (slot: { isoDate: string, hour: number }) => void, onTaskClick: (task: CalendarTask) => void }
 
-const CalendarGrid = ({ week, onSlotClick }: Props) => {
+const CalendarGrid = ({ week, onSlotClick, onTaskClick }: Props) => {
 
     return (
         <div style={{
@@ -108,7 +108,7 @@ const CalendarGrid = ({ week, onSlotClick }: Props) => {
                     </div>
                     <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
                         {day.tasks && day.tasks.map((task: CalendarTask) => (
-                            <TaskBlock task={task} />
+                            <TaskBlock task={task} onClick={() => onTaskClick(task)} />
                         ))}
                     </div>
                 </div>

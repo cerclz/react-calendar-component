@@ -18,28 +18,70 @@ type Slot = {
     hour: number
 }
 
+type ModalMode = "create" | "edit"
+
+const EMPTY_TASK: CalendarTask = {
+    id: "",
+    title: "",
+    date: "",
+    start: 0,
+    startM: 0,
+    end: 0,
+    endM: 0,
+    category: "",
+    comments: ""
+}
+
 export function WeeklyCalendar({ tasks }: Props) {
 
     const [viewMode, setViewMode] = useState<ViewMode>("week")
     const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [selectedSlot, setSelectedSlot] = useState<Slot | null> (null)
+    const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null)
+
+    // Modal state for create or editing a task
+    const [modalMode, setModalMode] = useState<ModalMode>("create")
+
+    // Set the form for the Modal,
+    // Change in onTaskEdit if there is from task
+    const [taskFormData, setTaskFormData] = useState<CalendarTask>(EMPTY_TASK)
 
     const openCreateModal = (slot: Slot) => {
         setSelectedSlot(slot)
+        setModalMode("create")
+        setTaskFormData({
+            ...taskFormData,
+            start: slot.hour,
+            end: slot.hour + 1,
+            date: slot.isoDate
+        })
         setIsModalOpen(true)
     }
 
-    const closeCreateModal = () => {
+    const onCloseModal = () => {
         setIsModalOpen(false)
         setSelectedSlot(null)
+        setTaskFormData(EMPTY_TASK)
+    }
+
+    const onTaskEdit = (task: CalendarTask) => {
+        setIsModalOpen(true)
+        setModalMode("edit")
+        setTaskFormData(task)
+    }
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement >) => {
+        const {name, value, type} = e.target
+
+        setTaskFormData(prev => ({
+            ...prev,
+            [name] : type === "number" ? Number(value) : value
+        }))
     }
 
     const week = useMemo(() => buildCalendarWeek(selectedDate, tasks), [selectedDate, tasks])
     const day = useMemo(() => buildCalendarDay(selectedDate, tasks), [selectedDate, tasks])
-
-    console.log(week)
 
     const today = () => setSelectedDate(new Date())
 
@@ -58,15 +100,15 @@ export function WeeklyCalendar({ tasks }: Props) {
                 onNext={goNext}
                 today={today}
                 title={getCurrentMonth(selectedDate.getMonth()) + ` ${selectedDate.getFullYear()}`}
-                // title={viewMode === "day" ? day.isoDate : `${week.days[0].isoDate} -> ${week.days[6].isoDate}`}
+            // title={viewMode === "day" ? day.isoDate : `${week.days[0].isoDate} -> ${week.days[6].isoDate}`}
             />
 
             {viewMode === "week" ? (
                 <div style={{ display: "grid", gridTemplateColumns: "56px 1fr" }}>
                     <TimeColumn />
-                    <CalendarGrid week={week} onSlotClick={openCreateModal}/>
+                    <CalendarGrid week={week} onSlotClick={openCreateModal} onTaskClick={onTaskEdit} />
 
-                    <CreateTaskModal open={isModalOpen} slot={selectedSlot} onClose={closeCreateModal}/>
+                    <CreateTaskModal open={isModalOpen} slot={selectedSlot} onClose={onCloseModal} mode={modalMode} formData={taskFormData} handleChange={handleChange} />
                 </div>
             ) : (
                 // <DayView day={day} />
