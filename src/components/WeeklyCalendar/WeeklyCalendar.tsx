@@ -71,12 +71,12 @@ export function WeeklyCalendar({ tasks }: Props) {
         setTaskFormData(task)
     }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement >) => {
-        const {name, value, type} = e.target
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value, type } = e.target
 
         setTaskFormData(prev => ({
             ...prev,
-            [name] : type === "number" ? Number(value) : value
+            [name]: type === "number" ? Number(value) : value
         }))
     }
 
@@ -111,8 +111,10 @@ export function WeeklyCalendar({ tasks }: Props) {
                     <CreateTaskModal open={isModalOpen} slot={selectedSlot} onClose={onCloseModal} mode={modalMode} formData={taskFormData} handleChange={handleChange} />
                 </div>
             ) : (
-                // <DayView day={day} />
-                <DayView day={day} />
+                <div style={{ display: "grid", gridTemplateColumns: "56px 1fr" }}>
+                    <TimeColumn />
+                    <DayView day={day} />
+                </div>
             )}
 
         </div>

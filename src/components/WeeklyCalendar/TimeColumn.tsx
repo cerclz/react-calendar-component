@@ -13,9 +13,9 @@ export function TimeColumn() {
                 return (
                     <div
                         key={i}
-                        style={{ borderBottom: "1px solid #ddd", position: "relative" }}
+                        style={{ position: "relative" }}
                     >
-                        <div style={{ position: "absolute", top: 0, right: 6, fontSize: 12, color: "#666" }}>
+                        <div style={{ position: "absolute", top: -10, right: 6, fontSize: 12, color: "#666" }}>
                             {String(hour).padStart(2, "0")}:00
                         </div>
                     </div>
