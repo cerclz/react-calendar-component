@@ -113,7 +113,10 @@ export function WeeklyCalendar({ tasks }: Props) {
             ) : (
                 <div style={{ display: "grid", gridTemplateColumns: "56px 1fr" }}>
                     <TimeColumn />
-                    <DayView day={day} />
+                    <DayView day={day} onSlotClick={openCreateModal} onTaskClick={onTaskEdit}/>
+
+                    <CreateTaskModal open={isModalOpen} slot={selectedSlot} onClose={onCloseModal} mode={modalMode} formData={taskFormData} handleChange={handleChange} />
+
                 </div>
             )}
 

@@ -1,12 +1,15 @@
 // DayView.tsx
 import { GRID_ROWS, HEADER_HEIGHT, SLOT_HEIGHT, START_HOUR, TOTAL_SLOTS } from "./calendarConfig";
-import type { CalendarDay } from "./types";
+import { TaskBlock } from "./TaskBlock";
+import type { CalendarDay, CalendarTask } from "./types";
 
 type Props = {
     day: CalendarDay
+    onSlotClick: (slot: { isoDate: string, hour: number }) => void,
+    onTaskClick: (task: CalendarTask) => void
 }
 
-export function DayView({ day }: Props) {
+export function DayView({ day, onSlotClick, onTaskClick }: Props) {
     return (
         <div
             style={{
@@ -51,6 +54,7 @@ export function DayView({ day }: Props) {
                             <button
                                 key={`${day.isoDate}-${slotIndex}`}
                                 type="button"
+                                onClick={() => onSlotClick({ isoDate: day.isoDate, hour })}
                                 style={{
                                     width: "100%",
                                     height: "100%",
@@ -70,6 +74,11 @@ export function DayView({ day }: Props) {
                                     backgroundColor: "#fff",
                                 }}
                             >
+                                <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+                                    {day.tasks && day.tasks.map((task: CalendarTask) => (
+                                        <TaskBlock task={task} onClick={() => onTaskClick(task)} />
+                                    ))}
+                                </div>
                             </button>
 
                         )
