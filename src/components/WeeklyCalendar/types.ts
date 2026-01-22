@@ -8,7 +8,8 @@ export type CalendarTask = {
     start: number
     startM: number 
     end: number 
-    endM: number 
+    endM: number
+    store: string
     category: string
     comments: string
 }

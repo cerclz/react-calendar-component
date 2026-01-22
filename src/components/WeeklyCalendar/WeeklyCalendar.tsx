@@ -28,6 +28,7 @@ const EMPTY_TASK: CalendarTask = {
     startM: 0,
     end: 0,
     endM: 0,
+    store: '',
     category: "",
     comments: ""
 }

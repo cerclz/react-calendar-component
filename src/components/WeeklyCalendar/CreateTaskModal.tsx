@@ -1,11 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { CalendarTask } from "./types";
+import { ExtraDataForm } from "./ExtraDataForm";
 
 type Slot = { isoDate: string; hour: number } | null
 
 type Props = { open: boolean, slot: Slot, onClose: () => void, mode: "create" | "edit", formData: CalendarTask, handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void }
 
+const stores = ["store 1", "store 2", "store 3"]
+
 export function CreateTaskModal({ open, slot, onClose, mode, formData, handleChange }: Props) {
+
+    console.log(formData.store)
 
     // Generate options for the select start and end forms
     let minutes = []
@@ -21,8 +26,6 @@ export function CreateTaskModal({ open, slot, onClose, mode, formData, handleCha
     if (!open) return null
 
     const isEdit = mode == "edit"
-
-
 
     return (
         <div
@@ -104,15 +107,25 @@ export function CreateTaskModal({ open, slot, onClose, mode, formData, handleCha
                         <option>Επιλογή Κατηγορίας</option>
                     </select>
 
-                    <input list="ice-cream-flavors" id="ice-cream-choice" name="" placeholder="Αναζήτηση Καταστήματος" onChange={handleChange} />
+                    <input list="stores" id="store" name="store" placeholder="Αναζήτηση Καταστήματος" value={formData.store} onChange={handleChange} />
 
-                    <datalist id="ice-cream-flavors">
-                        <option value="Chocolate"></option>
-                        <option value="Coconut"></option>
-                        <option value="Mint"></option>
-                        <option value="Strawberry"></option>
-                        <option value="Vanilla"></option>
+                    <datalist id="stores">
+                        {stores.map(store => <option key={store} value={store} />)}
                     </datalist>
+
+                    {formData.store && stores.includes(formData.store) && (
+                        <div>
+                            <textarea id="comment">
+                                a
+                            </textarea>
+                        </div>
+                    )}
+
+                    {formData.store && !stores.includes(formData.store) && (
+                        <div>
+                            <ExtraDataForm />
+                        </div>
+                    )}
 
                 </div>
                 {isEdit ?
