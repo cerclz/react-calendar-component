@@ -30,10 +30,7 @@ const CalendarGrid = ({ week, onSlotClick, onTaskClick }: Props) => {
                         alignItems: "center",
                         justifyContent: "center",
                         fontWeight: 700,
-                        /* ⬇️ μόνο αν ΔΕΝ είναι πρώτη στήλη */
                         borderLeft: i === 0 ? "none" : "1px solid #e2e2e2",
-
-                        /* ⬇️ μόνο αν είναι τελευταία στήλη */
                         borderRight:
                             i === week.days.length - 1
                                 ? "1px solid #e2e2e2"
@@ -51,7 +48,7 @@ const CalendarGrid = ({ week, onSlotClick, onTaskClick }: Props) => {
                     key={day.isoDate}
                     style={{
                         gridColumn: dayIndex + 1,
-                        gridRow: `2 / span ${TOTAL_SLOTS}`, // αν έχεις header row
+                        gridRow: `2 / span ${TOTAL_SLOTS}`,
                         position: "relative",
                         width: "100%",
                         height: "100%",
@@ -84,16 +81,11 @@ const CalendarGrid = ({ week, onSlotClick, onTaskClick }: Props) => {
                                         lineHeight: 0,
                                         border: "none",
                                         borderBottom: "1px solid #e2e2e2",
-                                        /* ⬇️ μόνο αν ΔΕΝ είναι πρώτη στήλη */
                                         borderLeft: dayIndex === 0 ? "none" : "1px solid #e2e2e2",
-
-                                        /* ⬇️ μόνο αν είναι τελευταία στήλη */
                                         borderRight:
                                             dayIndex === week.days.length - 1
                                                 ? "1px solid #e2e2e2"
                                                 : "none",
-
-                                        /* ⬇️ μόνο αν είναι πρώτη ώρα */
                                         borderTop:
                                             hour === START_HOUR
                                                 ? "1px solid #e2e2e2"

@@ -4,8 +4,7 @@ import { GRID_ROWS, START_HOUR, TOTAL_SLOTS } from "./calendarConfig";
 export function TimeColumn() {
 
     return (
-        <div style={{ display: "grid", gridTemplateRows: GRID_ROWS }}>
-            <div /> {/* 1ο row: spacer για να ταιριάξει με το header του CalendarGrid */}
+        <div style={{ display: "grid", gridTemplateRows: GRID_ROWS }}><div /> {/*Spacer for the first line*/}
 
             {Array.from({ length: TOTAL_SLOTS }).map((_, i) => {
                 const hour = START_HOUR + i

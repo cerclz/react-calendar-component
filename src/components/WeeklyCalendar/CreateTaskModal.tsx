@@ -50,14 +50,14 @@ export function CreateTaskModal({ open, slot, onClose, mode, formData, handleCha
                 }}
             >
                 <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-                    <div style={{ fontWeight: 800, fontSize: 18 }}>{isEdit ? formData.title : "Νέο task"}</div>
+                    <div style={{ fontWeight: 800, fontSize: 18 }}>{isEdit ? formData.title : "New Task"}</div>
                     <button onClick={onClose} style={{ border: 0, background: "transparent", cursor: "pointer" }}>
                         ✕
                     </button>
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column" }}>
-                    <input name="title" type="text" placeholder="Προσθήκη Τίτλου" value={formData.title} onChange={handleChange}></input>
+                    <input name="title" type="text" placeholder="Title" value={formData.title} onChange={handleChange}></input>
 
                     <div style={{ flexDirection: "row" }}>
                         <input
@@ -81,7 +81,6 @@ export function CreateTaskModal({ open, slot, onClose, mode, formData, handleCha
                             )}
                         </select>
 
-                        Έως
                         <div>
                             <input
                                 type="date"
@@ -104,10 +103,10 @@ export function CreateTaskModal({ open, slot, onClose, mode, formData, handleCha
                     </div>
 
                     <select>
-                        <option>Επιλογή Κατηγορίας</option>
+                        <option disabled>Select Category</option>
                     </select>
 
-                    <input list="stores" id="store" name="store" placeholder="Αναζήτηση Καταστήματος" value={formData.store} onChange={handleChange} />
+                    <input list="stores" id="store" name="store" placeholder="Search Data" value={formData.store} onChange={handleChange} />
 
                     <datalist id="stores">
                         {stores.map(store => <option key={store} value={store} />)}
@@ -130,14 +129,14 @@ export function CreateTaskModal({ open, slot, onClose, mode, formData, handleCha
                 </div>
                 {isEdit ?
                     <>
-                        <button>Ενημέρωση</button>
-                        <button>Διαγραφή</button>
-                        <button>Ακύρωση</button>
+                        <button>Update</button>
+                        <button>Delete</button>
+                        <button>Cancel</button>
                     </>
                     :
                     <>
-                        <button>Αποθήκευση</button>
-                        <button>Ακύρωση</button>
+                        <button>Save</button>
+                        <button>Cancel</button>
                     </>
                 }
 
