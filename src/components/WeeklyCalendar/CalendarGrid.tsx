@@ -9,6 +9,11 @@ type Props = { week: CalendarWeek, onSlotClick: (slot: { isoDate: string, hour: 
 const CalendarGrid = ({ week, onSlotClick, onTaskClick }: Props) => {
 
     return (
+        /**
+         * 7 Day Calendar Grid (One Column / day)
+         * 24 Rows (1 / hour) + 1 Header Row
+         */
+
         <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(7, 1fr)",
@@ -18,7 +23,10 @@ const CalendarGrid = ({ week, onSlotClick, onTaskClick }: Props) => {
         }}
         >
 
-            {/* Header Row */}
+            {/**
+             * Header Row 
+             * Highlighting Current Day
+            */}
             {week.days.map((day, i) => (
                 <div
                     key={day.isoDate}
@@ -29,6 +37,7 @@ const CalendarGrid = ({ week, onSlotClick, onTaskClick }: Props) => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
+                        flexDirection: "column",
                         fontWeight: 700,
                         borderLeft: i === 0 ? "none" : "1px solid #e2e2e2",
                         borderRight:
@@ -37,12 +46,31 @@ const CalendarGrid = ({ week, onSlotClick, onTaskClick }: Props) => {
                                 : "none",
                     }}
                 >
-                    <div>{day.date.getDate()}</div>
-                    <div>{getCurrentDay(day.date.getDay())}</div>
+                    <div
+                        style={{
+                            backgroundColor: isToday(day.date) ? "#1E90FF" : ' none',
+                            color: isToday(day.date) ? "white" : ' none',
+                            height: "50px",
+                            width: "50px",
+                            textAlign: "center",
+                            lineHeight: 2.8,
+                            fontSize: "18px",
+                            borderRadius: "50%"
+                        }}
+                    >
+                        {day.date.getDate()}
+                    </div>
+                    <div
+                        style={{ fontSize: 12, marginTop: "5px" }}
+                    >
+                        {getCurrentDay(day.date.getDay()).slice(0, 3).toUpperCase()}
+                    </div>
                 </div>
             ))}
 
-            {/* Slots (rows 2..TOTAL_SLOTS+1) */}
+            {/**
+             * Rendering Clickable Buttons (24h * 7d) to create task
+             */}
             {week.days.map((day: any, dayIndex: number) =>
                 <div
                     key={day.isoDate}
@@ -98,6 +126,9 @@ const CalendarGrid = ({ week, onSlotClick, onTaskClick }: Props) => {
                             )
                         })}
                     </div>
+                    {/**
+                     * Rendering Clickable events
+                     */}
                     <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
                         {day.tasks && day.tasks.map((task: CalendarTask) => (
                             <TaskBlock task={task} onClick={() => onTaskClick(task)} />

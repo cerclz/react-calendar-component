@@ -7,10 +7,9 @@ type Slot = { isoDate: string; hour: number } | null
 type Props = { open: boolean, slot: Slot, onClose: () => void, mode: "create" | "edit", formData: CalendarTask, handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void }
 
 const stores = ["store 1", "store 2", "store 3"]
+const categories = ["category 1", "category 2", "category 3"]
 
 export function CreateTaskModal({ open, slot, onClose, mode, formData, handleChange }: Props) {
-
-    console.log(formData.store)
 
     // Generate options for the select start and end forms
     let minutes = []
@@ -101,10 +100,34 @@ export function CreateTaskModal({ open, slot, onClose, mode, formData, handleCha
                             </select>
                         </div>
                     </div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                        {categories.map((cat) => (
+                            <label
+                                key={cat}
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    padding: "8px 14px",
+                                    border: "1px solid #ddd",
+                                    gap: 8,
+                                    cursor: "pointer"
+                                }}
+                            >
+                                <input
+                                    type="radio"
+                                    name="category"
+                                    value={cat}
+                                    style={{ display: "none" }}
 
-                    <select>
-                        <option disabled>Select Category</option>
-                    </select>
+                                />
+                                {cat}
+
+                            </label>
+                        ))}
+
+
+                    </div>
+
 
                     <input list="stores" id="store" name="store" placeholder="Search Data" value={formData.store} onChange={handleChange} />
 
@@ -129,15 +152,72 @@ export function CreateTaskModal({ open, slot, onClose, mode, formData, handleCha
                 </div>
                 {isEdit ?
                     <>
-                        <button>Update</button>
-                        <button>Delete</button>
-                        <button>Cancel</button>
+                        <button
+                            style={{
+                                backgroundColor: "transparent",
+                                border: "none",
+                                color: "#DC143C",
+                                fontSize: "18px",
+                                marginRight: "10px"
+                            }}
+                        >
+                            Delete
+                        </button>
+                        <button
+                            style={{
+                                backgroundColor: "transparent",
+                                border: "none",
+                                color: "#1e90ff",
+                                fontSize: "18px",
+                                marginRight: "10px"
+                            }}
+                        >
+                            Cancel
+                        </button>
+
+                        <button
+                            style={{
+                                backgroundColor: "#1E90FF",
+                                border: "none",
+                                borderRadius: "10px",
+                                fontSize: "18px",
+                                marginTop: "10px",
+                                color: "#fff",
+                                padding: "10px 15px"
+                            }}
+                        >
+                            Update
+                        </button>
+
                     </>
                     :
-                    <>
-                        <button>Save</button>
-                        <button>Cancel</button>
-                    </>
+                    <div>
+                        <button
+                            style={{
+                                backgroundColor: "transparent",
+                                border: "none",
+                                color: "#1e90ff",
+                                fontSize: "18px",
+                                marginRight: "10px"
+                            }}
+                        >
+                            Cancel
+                        </button>
+
+                        <button
+                            style={{
+                                backgroundColor: "#1E90FF",
+                                border: "none",
+                                borderRadius: "10px",
+                                fontSize: "18px",
+                                marginTop: "10px",
+                                color: "#fff",
+                                padding: "10px 15px"
+                            }}
+                        >
+                            Save
+                        </button>
+                    </div>
                 }
 
             </div>
