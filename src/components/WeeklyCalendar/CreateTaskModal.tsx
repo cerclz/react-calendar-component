@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { CalendarTask } from "./types";
 import { ExtraDataForm } from "./ExtraDataForm";
+import type { CalendarTask } from "./types";
 
 type Slot = { isoDate: string; hour: number } | null
 

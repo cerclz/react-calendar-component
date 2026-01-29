@@ -1,7 +1,7 @@
 // TaskBlock.tsx
 
 import { PX_PER_MINUTE, SLOT_HEIGHT, START_HOUR } from "./calendarConfig";
-import { CalendarTask } from "./types";
+import type { CalendarTask } from "./types";
 
 type Props = {
   task: CalendarTask
