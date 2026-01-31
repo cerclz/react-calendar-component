@@ -2,6 +2,7 @@ import "dotenv/config"
 import express from "express"
 import cors from "cors"
 import { connectDB } from "./config/dbConnection.js"
+import taskRoutes from "./routes/taskRoutes.js"
 
 const app = express()
 
@@ -14,6 +15,8 @@ const MONGODB_URI = process.env.MONGODB_URI
 if (!MONGODB_URI) {
   throw new Error("Missing MONGODB_URI in .env")
 }
+
+app.use('/api/tasks', taskRoutes)
 
 console.log("Starting server...")
 
