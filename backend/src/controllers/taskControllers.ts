@@ -12,9 +12,10 @@ export const getTasks = async (req: Request, res: Response) => {
  * @access  Private
  */
 export const createTask = async (req: Request, res: Response) => {
+    console.log(req.body)
     const { title, startDate, endDate, startHour, endHour, startMinute, endMinute, category, comment } = req.body
 
-    if (!title || !startDate || !endDate || !startHour || !endHour || !startMinute || !endMinute || !category || !comment) {
+    if (!title || !startDate || !endDate || !startHour || !endHour || !startMinute || !endMinute || !category) {
         return res.status(400).json("All fields are required")
     }
 

@@ -7,6 +7,7 @@ import { DayView } from "./DayView"
 import { TimeColumn } from "./TimeColumn"
 import { getCurrentMonth } from "./date.utils"
 import { CreateTaskModal } from "./CreateTaskModal"
+import { useCreateTaskMutation } from "../../api/tasksApiSlice"
 
 type ViewMode = "day" | "week"
 type Props = {
@@ -20,14 +21,14 @@ type Slot = {
 
 type ModalMode = "create" | "edit"
 
-const EMPTY_TASK: CalendarTask = {
-    id: "",
+const EMPTY_TASK: Omit<CalendarTask, "id"> = {
     title: "",
-    date: "",
-    start: 0,
-    startM: 0,
-    end: 0,
-    endM: 0,
+    startDate: "",
+    endDate: "",
+    startHour: 0,
+    startMinute: 0,
+    endHour: 0,
+    endMinute: 0,
     store: '',
     category: "",
     comments: ""
@@ -46,16 +47,17 @@ export function WeeklyCalendar({ tasks }: Props) {
 
     // Set the form for the Modal,
     // Change in onTaskEdit if there is from task
-    const [taskFormData, setTaskFormData] = useState<CalendarTask>(EMPTY_TASK)
+    const [taskFormData, setTaskFormData] = useState<Omit<CalendarTask, "id">>(EMPTY_TASK)
 
     const openCreateModal = (slot: Slot) => {
         setSelectedSlot(slot)
         setModalMode("create")
         setTaskFormData({
             ...taskFormData,
-            start: slot.hour,
-            end: slot.hour + 1,
-            date: slot.isoDate
+            startHour: slot.hour,
+            endHour: slot.hour + 1,
+            startDate: slot.isoDate,
+            endDate: slot.isoDate
         })
         setIsModalOpen(true)
     }
@@ -92,6 +94,21 @@ export function WeeklyCalendar({ tasks }: Props) {
     // Go next day if view mode is day else go next week
     const goNext = () => setSelectedDate(d => (viewMode === "day" ? addDays(d, +1) : addDays(d, 7)))
 
+    /**
+     * Create New Task Implementation
+     */
+    const [createTask, { isLoading, error }] = useCreateTaskMutation()
+
+    const onSubmit = async () => {
+        try {
+            await createTask(taskFormData).unwrap()
+            onCloseModal()
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <CalendarHeader
@@ -109,14 +126,34 @@ export function WeeklyCalendar({ tasks }: Props) {
                     <TimeColumn />
                     <CalendarGrid week={week} onSlotClick={openCreateModal} onTaskClick={onTaskEdit} />
 
-                    <CreateTaskModal open={isModalOpen} slot={selectedSlot} onClose={onCloseModal} mode={modalMode} formData={taskFormData} handleChange={handleChange} />
+                    <CreateTaskModal
+                        open={isModalOpen}
+                        slot={selectedSlot}
+                        onClose={onCloseModal}
+                        mode={modalMode}
+                        formData={taskFormData}
+                        handleChange={handleChange}
+                        onSubmit={onSubmit}
+                        isSaving={isLoading}
+                        isError={!!error}
+                    />
                 </div>
             ) : (
                 <div style={{ display: "grid", gridTemplateColumns: "56px 1fr" }}>
                     <TimeColumn />
-                    <DayView day={day} onSlotClick={openCreateModal} onTaskClick={onTaskEdit}/>
+                    <DayView day={day} onSlotClick={openCreateModal} onTaskClick={onTaskEdit} />
 
-                    <CreateTaskModal open={isModalOpen} slot={selectedSlot} onClose={onCloseModal} mode={modalMode} formData={taskFormData} handleChange={handleChange} />
+                    <CreateTaskModal
+                        open={isModalOpen}
+                        slot={selectedSlot}
+                        onClose={onCloseModal}
+                        mode={modalMode}
+                        formData={taskFormData}
+                        handleChange={handleChange}
+                        onSubmit={onSubmit}
+                        isSaving={isLoading}
+                        isError={!!error}
+                    />
 
                 </div>
             )}

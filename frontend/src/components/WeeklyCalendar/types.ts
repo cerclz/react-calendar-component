@@ -4,11 +4,12 @@
 export type CalendarTask = {
     id: string
     title: string
-    date: string
-    start: number
-    startM: number 
-    end: number 
-    endM: number
+    startDate: string
+    endDate: string
+    startHour: number
+    startMinute: number 
+    endHour: number 
+    endMinute: number
     store: string
     category: string
     comments: string
