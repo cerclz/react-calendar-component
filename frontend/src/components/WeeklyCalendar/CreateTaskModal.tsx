@@ -10,6 +10,8 @@ type Props = {
     formData: Omit<CalendarTask, "_id">,
     handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
     onSubmit: () => void
+    onDelete: () => void
+    isDeleting: boolean
     isSaving: boolean
     isError: boolean
 }
@@ -24,6 +26,8 @@ export function CreateTaskModal({
     formData,
     handleChange,
     onSubmit,
+    isDeleting,
+    onDelete,
     isSaving,
     isError
 }: Props) {
@@ -85,13 +89,13 @@ export function CreateTaskModal({
 
                             <select name="startHour" value={String(formData?.startHour).padStart(2, "0")} onChange={handleChange}>
                                 {hours.map((h) =>
-                                    <option key={h}>{h}</option>
+                                    <option key={h} value={h}>{h}</option>
                                 )}
                             </select>
 
                             <select name="startMinute" value={String(formData?.startMinute).padStart(2, "0")} onChange={handleChange}>
                                 {minutes.map((m) =>
-                                    <option key={m}>{m}</option>
+                                    <option key={m} value={m}>{m}</option>
                                 )}
                             </select>
 
@@ -100,13 +104,13 @@ export function CreateTaskModal({
 
                                 <select name="endHour" value={String(formData?.endHour).padStart(2, "0")} onChange={handleChange}>
                                     {hours.map((h) =>
-                                        <option key={h}>{h}</option>
+                                        <option key={h} value={h}>{h}</option>
                                     )}
                                 </select>
 
                                 <select name="endMinute" value={String(formData?.endMinute).padStart(2, "0")} onChange={handleChange}>
                                     {minutes.map((m) =>
-                                        <option key={m}>{m}</option>
+                                        <option key={m} value={m}>{m}</option>
                                     )}
                                 </select>
                             </div>
@@ -163,15 +167,19 @@ export function CreateTaskModal({
                     {isEdit ?
                         <>
                             <button
+                                type="button"
+                                onClick={onDelete}
+                                disabled={isDeleting}
                                 style={{
                                     backgroundColor: "transparent",
                                     border: "none",
                                     color: "#DC143C",
                                     fontSize: "18px",
-                                    marginRight: "10px"
+                                    marginRight: "10px",
+                                    cursor: "pointer"
                                 }}
                             >
-                                Delete
+                                {isDeleting ? "Deleting..." : "Delete"}
                             </button>
                             <button
                                 style={{
@@ -203,15 +211,15 @@ export function CreateTaskModal({
                         :
                         <div>
                             <button
-                            type="button"
-                            onClick={onClose}
+                                type="button"
+                                onClick={onClose}
                                 style={{
                                     backgroundColor: "transparent",
                                     border: "none",
                                     color: "#1e90ff",
                                     fontSize: "18px",
                                     marginRight: "10px",
-                                    cursor:"pointer"
+                                    cursor: "pointer"
                                 }}
                             >
                                 Cancel
@@ -228,7 +236,7 @@ export function CreateTaskModal({
                                     marginTop: "10px",
                                     color: "#fff",
                                     padding: "10px 15px",
-                                    cursor:"pointer"
+                                    cursor: "pointer"
                                 }}
                             >
                                 {isSaving ? "Saving..." : "Save"}

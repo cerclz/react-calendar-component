@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react"
-import type { CalendarTask } from "./types"
+import type { CalendarTask, CreateTaskDto } from "./types"
 import { buildCalendarWeek, buildCalendarDay, addDays, getStartOfTheWeek, toLocalISODate } from "./buildCalendar"
 import { CalendarHeader } from "./CalendarHeader"
 import CalendarGrid from "./CalendarGrid"
@@ -7,7 +7,7 @@ import { DayView } from "./DayView"
 import { TimeColumn } from "./TimeColumn"
 import { getCurrentMonth } from "./date.utils"
 import { CreateTaskModal } from "./CreateTaskModal"
-import { useCreateTaskMutation, useGetTasksQuery } from "../../api/tasksApiSlice"
+import { useCreateTaskMutation, useDeleteTaskMutation, useGetTasksQuery } from "../../api/tasksApiSlice"
 
 type ViewMode = "day" | "week"
 
@@ -18,18 +18,20 @@ type Slot = {
 
 type ModalMode = "create" | "edit"
 
-const EMPTY_TASK: Omit<CalendarTask, "_id"> = {
+const EMPTY_TASK: CreateTaskDto = {
     title: "",
     startDate: "",
     endDate: "",
     startHour: 0,
-    startMinute: 0,
+    startMinute: "00",
     endHour: 0,
-    endMinute: 0,
+    endMinute: "00",
     store: '',
     category: "",
     comments: ""
 }
+
+const NUM_FIELDS = new Set(["startHour", "startMinute", "endHour", "endMinute"])
 
 export function WeeklyCalendar() {
 
@@ -44,7 +46,9 @@ export function WeeklyCalendar() {
 
     // Set the form for the Modal,
     // Change in onTaskEdit if there is from task
-    const [taskFormData, setTaskFormData] = useState<Omit<CalendarTask, "_id">>(EMPTY_TASK)
+    const [taskFormData, setTaskFormData] = useState<CreateTaskDto>(EMPTY_TASK)
+    console.log("taskFormData:", taskFormData)
+    const [selectedTask, setSelectedTask] = useState<CalendarTask | null>(null)
 
     const openCreateModal = (slot: Slot) => {
         setSelectedSlot(slot)
@@ -63,20 +67,23 @@ export function WeeklyCalendar() {
         setIsModalOpen(false)
         setSelectedSlot(null)
         setTaskFormData(EMPTY_TASK)
+        setSelectedTask(null)
     }
 
     const onTaskEdit = (task: CalendarTask) => {
         setIsModalOpen(true)
         setModalMode("edit")
         setTaskFormData(task)
+        setSelectedTask(task)
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value, type } = e.target
+        const { name, value } = e.target
 
         setTaskFormData(prev => ({
             ...prev,
-            [name]: type === "number" ? Number(value) : value
+            [name]: NUM_FIELDS.has(name) ? Number(value) : value
+
         }))
     }
 
@@ -117,6 +124,27 @@ export function WeeklyCalendar() {
         }
     }
 
+    /** 
+     * Delete Task Implementation 
+     */
+
+    const [deleteTask, { isLoading: deleteLoading, error: deleteError }] = useDeleteTaskMutation()
+
+    const onDelete = async () => {
+        try {
+            if (!selectedTask?._id) return
+
+            // optional confirm
+            const ok = window.confirm("Delete Task?")
+            if (!ok) return
+
+            await deleteTask({ id: selectedTask._id }).unwrap()
+            onCloseModal()
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
 
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -150,6 +178,8 @@ export function WeeklyCalendar() {
                         handleChange={handleChange}
                         onSubmit={onSubmit}
                         isSaving={isLoading}
+                        onDelete={onDelete}
+                        isDeleting={deleteLoading}
                         isError={!!error}
                     />
                 </div>
@@ -166,6 +196,8 @@ export function WeeklyCalendar() {
                         formData={taskFormData}
                         handleChange={handleChange}
                         onSubmit={onSubmit}
+                        onDelete={onDelete}
+                        isDeleting={deleteLoading}
                         isSaving={isLoading}
                         isError={!!error}
                     />

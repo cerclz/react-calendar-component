@@ -7,13 +7,15 @@ export type CalendarTask = {
     startDate: string
     endDate: string
     startHour: number
-    startMinute: number 
+    startMinute: string 
     endHour: number 
-    endMinute: number
+    endMinute: string
     store: string
     category: string
     comments: string
 }
+
+export type CreateTaskDto = Omit<CalendarTask, "_id">
 
 export type CalendarDay = {
   date: Date
