@@ -7,7 +7,7 @@ import { DayView } from "./DayView"
 import { TimeColumn } from "./TimeColumn"
 import { getCurrentMonth } from "./date.utils"
 import { CreateTaskModal } from "./CreateTaskModal"
-import { useCreateTaskMutation, useDeleteTaskMutation, useGetTasksQuery } from "../../api/tasksApiSlice"
+import { useCreateTaskMutation, useDeleteTaskMutation, useGetTasksQuery, useUpdateTaskMutation } from "../../api/tasksApiSlice"
 
 type ViewMode = "day" | "week"
 
@@ -47,7 +47,6 @@ export function WeeklyCalendar() {
     // Set the form for the Modal,
     // Change in onTaskEdit if there is from task
     const [taskFormData, setTaskFormData] = useState<CreateTaskDto>(EMPTY_TASK)
-    console.log("taskFormData:", taskFormData)
     const [selectedTask, setSelectedTask] = useState<CalendarTask | null>(null)
 
     const openCreateModal = (slot: Slot) => {
@@ -124,6 +123,20 @@ export function WeeklyCalendar() {
         }
     }
 
+    /**
+     * Update Task Implementation
+     */
+
+    const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation()
+
+    const onUpdate = async () => {
+        if (!selectedTask?._id) return
+
+        await updateTask({ id: selectedTask._id, body: taskFormData }).unwrap()
+        onCloseModal()
+    }
+
+
     /** 
      * Delete Task Implementation 
      */
@@ -178,6 +191,8 @@ export function WeeklyCalendar() {
                         handleChange={handleChange}
                         onSubmit={onSubmit}
                         isSaving={isLoading}
+                        isUpdating={isUpdating}
+                        onUpdate={onUpdate}
                         onDelete={onDelete}
                         isDeleting={deleteLoading}
                         isError={!!error}
@@ -196,6 +211,8 @@ export function WeeklyCalendar() {
                         formData={taskFormData}
                         handleChange={handleChange}
                         onSubmit={onSubmit}
+                        isUpdating={isUpdating}
+                        onUpdate={onUpdate}
                         onDelete={onDelete}
                         isDeleting={deleteLoading}
                         isSaving={isLoading}

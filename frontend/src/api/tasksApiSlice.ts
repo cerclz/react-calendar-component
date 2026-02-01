@@ -9,6 +9,11 @@ export type GetTaskArgs = {
     to: string
 }
 
+export type UpdateTaskArgs = {
+  id: string
+  body: CreateTaskDto
+}
+
 export const tasksApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getTasks: builder.query<CalendarTask[], GetTaskArgs>({
@@ -31,7 +36,19 @@ export const tasksApiSlice = apiSlice.injectEndpoints({
             invalidatesTags: [{ type: "Tasks", id: "LIST" }]
         }),
 
-        deleteTask: builder.mutation<{ success: true }, { id: string }>({
+        updateTask: builder.mutation<CalendarTask, UpdateTaskArgs>({
+            query: ({ id, body }) => ({
+                url: `/api/tasks/${id}`,
+                method: "PUT",
+                body,
+            }),
+            invalidatesTags: (_result, _error, arg) => [
+                { type: "Tasks", id: arg.id },
+                { type: "Tasks", id: "LIST" },
+            ],
+        }),
+
+        deleteTask: builder.mutation<{ message: string }, { id: string }>({
             query: ({ id }) => ({
                 url: `/api/tasks/${id}`,
                 method: "DELETE",
@@ -48,5 +65,6 @@ export const tasksApiSlice = apiSlice.injectEndpoints({
 export const {
     useGetTasksQuery,
     useCreateTaskMutation,
+    useUpdateTaskMutation,
     useDeleteTaskMutation
 } = tasksApiSlice

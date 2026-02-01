@@ -10,6 +10,8 @@ type Props = {
     formData: Omit<CalendarTask, "_id">,
     handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
     onSubmit: () => void
+    onUpdate: () => void
+    isUpdating: boolean
     onDelete: () => void
     isDeleting: boolean
     isSaving: boolean
@@ -26,6 +28,8 @@ export function CreateTaskModal({
     formData,
     handleChange,
     onSubmit,
+    onUpdate,
+    isUpdating,
     isDeleting,
     onDelete,
     isSaving,
@@ -194,6 +198,9 @@ export function CreateTaskModal({
                             </button>
 
                             <button
+                            type="button"
+                            onClick={onUpdate}
+                            disabled={isUpdating}
                                 style={{
                                     backgroundColor: "#1E90FF",
                                     border: "none",
@@ -201,10 +208,11 @@ export function CreateTaskModal({
                                     fontSize: "18px",
                                     marginTop: "10px",
                                     color: "#fff",
-                                    padding: "10px 15px"
+                                    padding: "10px 15px",
+                                    cursor: "pointer"
                                 }}
                             >
-                                {isSaving ? "Saving..." : "Update"}
+                                {isUpdating ? "Updating..." : "Update"}
                             </button>
 
                         </>

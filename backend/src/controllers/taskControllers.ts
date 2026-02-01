@@ -34,6 +34,7 @@ export const getTasks = async (req: Request, res: Response) => {
         return res.status(500).json({ message: `Error fetching tasks: ${e}` })
     }
 }
+
 /**
  * @desc    Create new calendar task
  * @route   POST /api/tasks 
@@ -68,6 +69,86 @@ export const createTask = async (req: Request, res: Response) => {
         res.status(400).json({ message: `Error creating new task ${e}` })
     }
 }
+
+/**
+ * @desc    Update a calendar task
+ * @route   PATCH /api/tasks/:id
+ * @access  Private
+ */
+
+export const updateTask = async (req: Request, res: Response) => {
+    const { id } = req.params
+
+    if (typeof id !== "string") {
+        return res.status(400).json({ message: "Task id is required" })
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "Invalid task id" })
+    }
+
+    const {
+        title,
+        startDate,
+        endDate,
+        startHour,
+        endHour,
+        startMinute,
+        endMinute,
+        category,
+        comment,
+    } = req.body
+
+    if (!title || !startDate || !endDate || !category) {
+        return res.status(400).json("All fields are required")
+    }
+
+    const toInt = (v: unknown) => {
+        const n = Number(v)
+        return Number.isInteger(n) ? n : null
+    }
+
+    const sh = toInt(startHour)
+    const eh = toInt(endHour)
+    const sm = toInt(startMinute)
+    const em = toInt(endMinute)
+
+    if (
+        sh === null || sh < 0 || sh > 23 ||
+        eh === null || eh < 0 || eh > 23 ||
+        sm === null || sm < 0 || sm > 59 ||
+        em === null || em < 0 || em > 59
+    ) {
+        return res.status(400).json({ message: "Invalid time values" })
+    }
+
+    try {
+        const updatedTask = await Task.findByIdAndUpdate(id, {
+            title: title.trim(),
+            startDate,
+            endDate,
+            startHour: sh,
+            endHour: eh,
+            startMinute: sm,
+            endMinute: em,
+            category: category.trim(),
+            comment,
+        },
+            {
+                new: true,
+                runValidators: true,
+            }).lean()
+
+        if (updatedTask) {
+            return res.status(200).json({ message: `Task updated: ${updatedTask}` })
+        }
+    } catch (e) {
+        console.error(`Error creating new task ${e}`)
+        res.status(400).json({ message: `Error creating new task ${e}` })
+    }
+
+}
+
 
 /**
  * @desc    Delete a calendar task
