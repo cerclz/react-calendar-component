@@ -42,9 +42,9 @@ export function buildCalendarDay(date: Date, tasks: CalendarTask[]): CalendarDay
 
     // sort day tasks
     const dayTasks = tasks
-        .filter(t => t.date === isoDate)
+        .filter(t => t.startDate === isoDate)
         .slice()
-        .sort((a, b) => a.start - b.start)
+        .sort((a, b) => a.startHour - b.startHour)
 
     return {
         date: new Date(date),
@@ -60,7 +60,7 @@ export function buildCalendarWeek(anchorDate: Date, tasks: CalendarTask[]): Cale
     // Group Tasks by date using Map
     const tasksByDate = new Map<string, CalendarTask[]>()
     for (let task of tasks) {
-        const key = task.date
+        const key = task.startDate
         const arr = tasksByDate.get(key)
 
         if (arr) arr.push(task)
@@ -74,7 +74,7 @@ export function buildCalendarWeek(anchorDate: Date, tasks: CalendarTask[]): Cale
         const isoDate = toLocalISODate(date)
 
         const dayTasks = (tasksByDate.get(isoDate) ?? []).slice()
-        dayTasks.sort((a, b) => a.start - b.start)
+        dayTasks.sort((a, b) => (a.startHour - b.startHour) || (a.startMinute - b.startMinute))
 
         days.push({ date, isoDate, tasks: dayTasks })
     }

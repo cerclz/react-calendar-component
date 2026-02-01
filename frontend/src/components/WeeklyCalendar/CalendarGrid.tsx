@@ -4,9 +4,15 @@ import { getCurrentDay, isToday } from "./date.utils"
 import { GRID_ROWS, HEADER_HEIGHT, SLOT_HEIGHT, START_HOUR, TOTAL_SLOTS } from "./calendarConfig"
 import { TaskBlock } from "./TaskBlock"
 
-type Props = { week: CalendarWeek, onSlotClick: (slot: { isoDate: string, hour: number }) => void, onTaskClick: (task: CalendarTask) => void }
+type Props = {
+    week: CalendarWeek,
+    onSlotClick: (slot: { isoDate: string, hour: number }) => void,
+    onTaskClick: (task: CalendarTask) => void
+    tasksLoading?: boolean
+    isError?: boolean
+}
 
-const CalendarGrid = ({ week, onSlotClick, onTaskClick }: Props) => {
+const CalendarGrid = ({ week, onSlotClick, onTaskClick, tasksLoading, isError }: Props) => {
 
     return (
         /**
@@ -89,7 +95,6 @@ const CalendarGrid = ({ week, onSlotClick, onTaskClick }: Props) => {
                         height: "100%",
                     }}>
                         {Array.from({ length: TOTAL_SLOTS }).map((_, slotIndex) => {
-                            const gridRow = 2 + slotIndex
                             const hour = START_HOUR + slotIndex
 
                             return (
@@ -130,9 +135,57 @@ const CalendarGrid = ({ week, onSlotClick, onTaskClick }: Props) => {
                      * Rendering Clickable events
                      */}
                     <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-                        {day.tasks && day.tasks.map((task: CalendarTask) => (
-                            <TaskBlock task={task} onClick={() => onTaskClick(task)} />
-                        ))}
+                        {/* Loading overlay */}
+                        {tasksLoading && (
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    inset: 0,
+                                    display: "grid",
+                                    placeItems: "center",
+                                    background: "rgba(255,255,255,0.6)",
+                                    fontSize: 14,
+                                    fontWeight: 600,
+                                    zIndex: 2,
+                                    pointerEvents: "none",
+                                }}
+                            >
+                                Loading…
+                            </div>
+                        )}
+
+                        {/* Error overlay */}
+                        {isError && (
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    inset: 0,
+                                    display: "grid",
+                                    placeItems: "center",
+                                    background: "rgba(255,0,0,0.08)",
+                                    color: "#b00020",
+                                    fontSize: 13,
+                                    fontWeight: 600,
+                                    zIndex: 2,
+                                    pointerEvents: "none",
+                                    textAlign: "center",
+                                    padding: 8,
+                                }}
+                            >
+                                Failed to load tasks
+                            </div>
+                        )}
+
+                        {/* Tasks */}
+                        {!tasksLoading && !isError &&
+                            day.tasks.map((task: CalendarTask) => (
+                                <TaskBlock
+                                    key={task._id}
+                                    task={task}
+                                    onClick={() => onTaskClick(task)}
+                                />
+                            ))
+                        }
                     </div>
                 </div>
             )}

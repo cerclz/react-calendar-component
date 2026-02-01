@@ -2,7 +2,7 @@
 // Calenader component types
 
 export type CalendarTask = {
-    id: string
+    _id: string
     title: string
     startDate: string
     endDate: string

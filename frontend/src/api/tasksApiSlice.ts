@@ -3,19 +3,20 @@
 import { apiSlice } from "./apiSlice";
 import type { CalendarTask } from "../components/WeeklyCalendar/types";
 
-export type CreateTaskDto = Omit<CalendarTask, "id">
+export type CreateTaskDto = Omit<CalendarTask, "_id">
+export type GetTaskArgs = {
+    from: string,
+    to: string
+}
 
 export const tasksApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        getTasks: builder.query<CalendarTask[], { date?: string } | void>({
-            query: (args) => {
-                const date = args && "date" in args ? args.date : undefined
-                return date ? `/api/tasks?date=${encodeURIComponent(date)}` : "/api/tasks"
-            },
+        getTasks: builder.query<CalendarTask[], GetTaskArgs>({
+            query: ({ from, to }) => `/api/tasks?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`,
             providesTags: (result) =>
                 result ?
                     [
-                        ...result.map((t) => ({ type: "Tasks" as const, id: t.id })),
+                        ...result.map((t) => ({ type: "Tasks" as const, id: t._id })),
                         { type: "Tasks" as const, id: "LIST" },
                     ]
                     : [{ type: "Tasks" as const, id: "LIST" }]

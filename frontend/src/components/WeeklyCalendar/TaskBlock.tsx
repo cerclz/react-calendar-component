@@ -1,16 +1,17 @@
 // TaskBlock.tsx
 
-import { PX_PER_MINUTE, SLOT_HEIGHT, START_HOUR } from "./calendarConfig";
+import { PX_PER_MINUTE, START_HOUR } from "./calendarConfig";
 import type { CalendarTask } from "./types";
 
 type Props = {
-  task: CalendarTask
-  onClick: () => void
+    task: CalendarTask
+    onClick: () => void
 }
 
 export function TaskBlock({ task, onClick }: Props) {
-    const startMinutes = task.start * 60 + task.startM // total minutes
-    const endMinutes = task.end * 60 + task.endM // total minutes
+
+    const startMinutes = task.startHour * 60 + task.startMinute // total minutes
+    const endMinutes = task.endHour * 60 + task.endMinute // total minutes
 
 
     const top = (startMinutes - START_HOUR * 60) * PX_PER_MINUTE
@@ -42,7 +43,7 @@ export function TaskBlock({ task, onClick }: Props) {
                 {task.title}
 
             </div>
-            {String(task.start).padStart(2, "0")}:{String(task.startM).padStart(2, "0")} - {String(task.end).padStart(2, "0")}:{String(task.endM).padStart(2, "0")}
+            {String(task.startHour).padStart(2, "0")}:{String(task.startMinute).padStart(2, "0")} - {String(task.endHour).padStart(2, "0")}:{String(task.endMinute).padStart(2, "0")}
         </div>
     )
 }

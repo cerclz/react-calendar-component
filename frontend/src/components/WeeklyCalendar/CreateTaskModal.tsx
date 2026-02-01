@@ -7,7 +7,7 @@ type Props = {
     open: boolean,
     slot: Slot, onClose: () => void,
     mode: "create" | "edit",
-    formData: Omit<CalendarTask, "id">,
+    formData: Omit<CalendarTask, "_id">,
     handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
     onSubmit: () => void
     isSaving: boolean
@@ -27,8 +27,6 @@ export function CreateTaskModal({
     isSaving,
     isError
 }: Props) {
-
-    console.log(formData)
 
     // Generate options for the select start and end forms
     let minutes = []

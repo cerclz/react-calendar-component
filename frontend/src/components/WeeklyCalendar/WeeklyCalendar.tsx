@@ -1,18 +1,15 @@
 import { useMemo, useState } from "react"
 import type { CalendarTask } from "./types"
-import { buildCalendarWeek, buildCalendarDay, addDays } from "./buildCalendar"
+import { buildCalendarWeek, buildCalendarDay, addDays, getStartOfTheWeek, toLocalISODate } from "./buildCalendar"
 import { CalendarHeader } from "./CalendarHeader"
 import CalendarGrid from "./CalendarGrid"
 import { DayView } from "./DayView"
 import { TimeColumn } from "./TimeColumn"
 import { getCurrentMonth } from "./date.utils"
 import { CreateTaskModal } from "./CreateTaskModal"
-import { useCreateTaskMutation } from "../../api/tasksApiSlice"
+import { useCreateTaskMutation, useGetTasksQuery } from "../../api/tasksApiSlice"
 
 type ViewMode = "day" | "week"
-type Props = {
-    tasks: CalendarTask[]
-}
 
 type Slot = {
     isoDate: string,
@@ -21,7 +18,7 @@ type Slot = {
 
 type ModalMode = "create" | "edit"
 
-const EMPTY_TASK: Omit<CalendarTask, "id"> = {
+const EMPTY_TASK: Omit<CalendarTask, "_id"> = {
     title: "",
     startDate: "",
     endDate: "",
@@ -34,7 +31,7 @@ const EMPTY_TASK: Omit<CalendarTask, "id"> = {
     comments: ""
 }
 
-export function WeeklyCalendar({ tasks }: Props) {
+export function WeeklyCalendar() {
 
     const [viewMode, setViewMode] = useState<ViewMode>("week")
     const [selectedDate, setSelectedDate] = useState<Date>(new Date())
@@ -47,7 +44,7 @@ export function WeeklyCalendar({ tasks }: Props) {
 
     // Set the form for the Modal,
     // Change in onTaskEdit if there is from task
-    const [taskFormData, setTaskFormData] = useState<Omit<CalendarTask, "id">>(EMPTY_TASK)
+    const [taskFormData, setTaskFormData] = useState<Omit<CalendarTask, "_id">>(EMPTY_TASK)
 
     const openCreateModal = (slot: Slot) => {
         setSelectedSlot(slot)
@@ -83,9 +80,6 @@ export function WeeklyCalendar({ tasks }: Props) {
         }))
     }
 
-    const week = useMemo(() => buildCalendarWeek(selectedDate, tasks), [selectedDate, tasks])
-    const day = useMemo(() => buildCalendarDay(selectedDate, tasks), [selectedDate, tasks])
-
     const today = () => setSelectedDate(new Date())
 
     // Go prev day if view mode is day else go prev week
@@ -93,6 +87,21 @@ export function WeeklyCalendar({ tasks }: Props) {
 
     // Go next day if view mode is day else go next week
     const goNext = () => setSelectedDate(d => (viewMode === "day" ? addDays(d, +1) : addDays(d, 7)))
+
+    /**
+     * Get Tasks within week range
+     */
+
+    const weekStartDate = useMemo(() => getStartOfTheWeek(selectedDate), [selectedDate])
+    const weekEndDate = useMemo(() => addDays(weekStartDate, 6), [weekStartDate])
+
+    const from = useMemo(() => toLocalISODate(weekStartDate), [weekStartDate])
+    const to = useMemo(() => toLocalISODate(weekEndDate), [weekEndDate])
+
+    const { data: tasks = [], isLoading: tasksLoading, error: tasksError } = useGetTasksQuery({ from, to })
+
+    const week = useMemo(() => buildCalendarWeek(selectedDate, tasks), [selectedDate, tasks])
+    const day = useMemo(() => buildCalendarDay(selectedDate, tasks), [selectedDate, tasks])
 
     /**
      * Create New Task Implementation
@@ -124,7 +133,13 @@ export function WeeklyCalendar({ tasks }: Props) {
             {viewMode === "week" ? (
                 <div style={{ display: "grid", gridTemplateColumns: "56px 1fr" }}>
                     <TimeColumn />
-                    <CalendarGrid week={week} onSlotClick={openCreateModal} onTaskClick={onTaskEdit} />
+                    <CalendarGrid
+                        week={week}
+                        onSlotClick={openCreateModal}
+                        onTaskClick={onTaskEdit}
+                        tasksLoading={tasksLoading}
+                        isError={!!tasksError}
+                    />
 
                     <CreateTaskModal
                         open={isModalOpen}
