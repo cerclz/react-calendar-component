@@ -1,5 +1,6 @@
 // TaskBlock.tsx
 
+import { useState } from "react";
 import { PX_PER_MINUTE, START_HOUR } from "./calendarConfig";
 import type { CalendarTask } from "./types";
 
@@ -11,6 +12,12 @@ type Props = {
 }
 
 export function TaskBlock({ task, onClick, overlapIndex, showDescription = false }: Props) {
+
+    const [isHover, setIsHover] = useState(false)
+
+    const baseZ = 10 + overlapIndex
+    const hoverZ = 999
+
     const startMinutes = task.startHour * 60 + task.startMinute // total minutes
     const endMinutes = task.endHour * 60 + task.endMinute // total minutes
 
@@ -33,8 +40,11 @@ export function TaskBlock({ task, onClick, overlapIndex, showDescription = false
                 overflow: "hidden",
                 pointerEvents: "auto",
                 cursor: "pointer",
+                zIndex: isHover ? hoverZ : baseZ,
                 border: overlapIndex != 0 ? "1px solid #fff" : "none"
             }}
+            onMouseEnter={() => setIsHover(true)}
+            onMouseLeave={() => setIsHover(false)}
             onClick={(e) => {
                 e.stopPropagation()
                 onClick()
