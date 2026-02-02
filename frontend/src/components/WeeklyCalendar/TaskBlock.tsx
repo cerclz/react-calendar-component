@@ -7,9 +7,10 @@ type Props = {
     task: CalendarTask
     onClick: () => void
     overlapIndex: number
+    showDescription?: boolean
 }
 
-export function TaskBlock({ task, onClick, overlapIndex }: Props) {
+export function TaskBlock({ task, onClick, overlapIndex, showDescription = false }: Props) {
     const startMinutes = task.startHour * 60 + task.startMinute // total minutes
     const endMinutes = task.endHour * 60 + task.endMinute // total minutes
 
@@ -47,6 +48,12 @@ export function TaskBlock({ task, onClick, overlapIndex }: Props) {
                 <div style={{ fontSize: 12, whiteSpace: "nowrap" }}>
                     {String(task.startHour).padStart(2, "0")}:{String(task.startMinute).padStart(2, "0")} - {String(task.endHour).padStart(2, "0")}:{String(task.endMinute).padStart(2, "0")}
                 </div>
+
+                {showDescription && task.description && (
+                    <div style={{ fontSize: 12, overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {task.description}
+                    </div>
+                )}
             </div>
 
         </div>

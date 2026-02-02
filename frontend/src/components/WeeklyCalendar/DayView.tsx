@@ -93,6 +93,7 @@ export function DayView({ day, onSlotClick, onTaskClick, tasksLoading, isError }
                                                     task={task}
                                                     onClick={() => onTaskClick(task)}
                                                     overlapIndex={overlapIndex}
+                                                    showDescription={true}
                                                 />
                                             )
                                         })
