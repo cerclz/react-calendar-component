@@ -3,6 +3,7 @@ import type { CalendarTask, CalendarWeek } from "./types"
 import { getCurrentDay, isToday } from "./date.utils"
 import { GRID_ROWS, HEADER_HEIGHT, SLOT_HEIGHT, START_HOUR, TOTAL_SLOTS } from "./calendarConfig"
 import { TaskBlock } from "./TaskBlock"
+import { calculateTaskOverlap } from "./buildCalendar"
 
 type Props = {
     week: CalendarWeek,
@@ -175,17 +176,24 @@ const CalendarGrid = ({ week, onSlotClick, onTaskClick, tasksLoading, isError }:
                                 Failed to load tasks
                             </div>
                         )}
-
                         {/* Tasks */}
-                        {!tasksLoading && !isError &&
-                            day.tasks.map((task: CalendarTask) => (
-                                <TaskBlock
-                                    key={task._id}
-                                    task={task}
-                                    onClick={() => onTaskClick(task)}
-                                />
-                            ))
-                        }
+                        {!tasksLoading && !isError && (() => {
+                            const tasks = day.tasks ?? []
+                            let overlapIndex = 0
+
+                            return tasks.map((task: CalendarTask, index: number) => {
+                                overlapIndex = calculateTaskOverlap(tasks, index, overlapIndex)
+
+                                return (
+                                    <TaskBlock
+                                        key={task._id}
+                                        task={task}
+                                        onClick={() => onTaskClick(task)}
+                                        overlapIndex={overlapIndex}
+                                    />
+                                )
+                            })
+                        })()}
                     </div>
                 </div>
             )}

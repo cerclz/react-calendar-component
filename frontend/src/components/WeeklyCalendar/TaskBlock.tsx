@@ -6,13 +6,12 @@ import type { CalendarTask } from "./types";
 type Props = {
     task: CalendarTask
     onClick: () => void
+    overlapIndex: number
 }
 
-export function TaskBlock({ task, onClick }: Props) {
-
+export function TaskBlock({ task, onClick, overlapIndex }: Props) {
     const startMinutes = task.startHour * 60 + task.startMinute // total minutes
     const endMinutes = task.endHour * 60 + task.endMinute // total minutes
-
 
     const top = (startMinutes - START_HOUR * 60) * PX_PER_MINUTE
     const height = Math.max(8, (endMinutes - startMinutes) * PX_PER_MINUTE)
@@ -23,7 +22,7 @@ export function TaskBlock({ task, onClick }: Props) {
                 position: "absolute",
                 top,
                 height,
-                left: 3,
+                left: overlapIndex != 0 ? 18 * overlapIndex : 0,
                 right: 3,
                 backgroundColor: "blue",
                 color: "white",
@@ -32,18 +31,24 @@ export function TaskBlock({ task, onClick }: Props) {
                 boxSizing: "border-box",
                 overflow: "hidden",
                 pointerEvents: "auto",
-                cursor: "pointer"
+                cursor: "pointer",
+                border: overlapIndex != 0 ? "1px solid #fff" : "none"
             }}
             onClick={(e) => {
                 e.stopPropagation()
                 onClick()
             }}
         >
-            <div>
-                {task.title}
+            <div style={{ display: "grid", rowGap: 2, lineHeight: 1.2 }}>
+                <div style={{ fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {task.title}
+                </div>
 
+                <div style={{ fontSize: 12, whiteSpace: "nowrap" }}>
+                    {String(task.startHour).padStart(2, "0")}:{String(task.startMinute).padStart(2, "0")} - {String(task.endHour).padStart(2, "0")}:{String(task.endMinute).padStart(2, "0")}
+                </div>
             </div>
-            {String(task.startHour).padStart(2, "0")}:{String(task.startMinute).padStart(2, "0")} - {String(task.endHour).padStart(2, "0")}:{String(task.endMinute).padStart(2, "0")}
+
         </div>
     )
 }

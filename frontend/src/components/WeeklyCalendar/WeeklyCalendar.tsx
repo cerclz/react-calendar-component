@@ -25,9 +25,9 @@ const EMPTY_TASK: CreateTaskDto = {
     startDate: "",
     endDate: "",
     startHour: 0,
-    startMinute: "00",
+    startMinute: 0,
     endHour: 0,
-    endMinute: "00",
+    endMinute: 0,
     store: '',
     category: "",
     description: ""
@@ -209,7 +209,13 @@ export function WeeklyCalendar() {
             ) : (
                 <div style={{ display: "grid", gridTemplateColumns: "56px 1fr" }}>
                     <TimeColumn />
-                    <DayView day={day} onSlotClick={openCreateModal} onTaskClick={onTaskEdit} />
+                    <DayView
+                        day={day}
+                        onSlotClick={openCreateModal}
+                        onTaskClick={onTaskEdit}
+                        tasksLoading={tasksLoading}
+                        isError={!!tasksError}
+                    />
 
                     <CreateTaskModal
                         open={isModalOpen}

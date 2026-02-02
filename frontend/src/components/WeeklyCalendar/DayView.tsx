@@ -1,4 +1,5 @@
 // DayView.tsx
+import { calculateTaskOverlap } from "./buildCalendar";
 import { GRID_ROWS, HEADER_HEIGHT, SLOT_HEIGHT, START_HOUR, TOTAL_SLOTS } from "./calendarConfig";
 import { TaskBlock } from "./TaskBlock";
 import type { CalendarDay, CalendarTask } from "./types";
@@ -7,9 +8,12 @@ type Props = {
     day: CalendarDay
     onSlotClick: (slot: { isoDate: string, hour: number }) => void,
     onTaskClick: (task: CalendarTask) => void
+    tasksLoading?: boolean
+    isError?: boolean
 }
 
-export function DayView({ day, onSlotClick, onTaskClick }: Props) {
+export function DayView({ day, onSlotClick, onTaskClick, tasksLoading, isError }: Props) {
+
     return (
         <div
             style={{
@@ -75,9 +79,24 @@ export function DayView({ day, onSlotClick, onTaskClick }: Props) {
                                 }}
                             >
                                 <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-                                    {day.tasks && day.tasks.map((task: CalendarTask) => (
-                                        <TaskBlock task={task} onClick={() => onTaskClick(task)} />
-                                    ))}
+                                    {!tasksLoading && !isError && (() => {
+                                        const tasks = day.tasks ?? []
+                                        let overlapIndex = 0
+
+                                        return tasks.map((task: CalendarTask, index: number) => {
+                                            overlapIndex = calculateTaskOverlap(tasks, index, overlapIndex)
+
+
+                                            return (
+                                                <TaskBlock
+                                                    key={task._id}
+                                                    task={task}
+                                                    onClick={() => onTaskClick(task)}
+                                                    overlapIndex={overlapIndex}
+                                                />
+                                            )
+                                        })
+                                    })()}
                                 </div>
                             </button>
 

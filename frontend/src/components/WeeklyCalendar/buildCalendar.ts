@@ -85,3 +85,16 @@ export function buildCalendarWeek(anchorDate: Date, tasks: CalendarTask[]): Cale
     }
 }
 
+export function calculateTaskOverlap(tasks: CalendarTask[], index: number, overlapIndex: number = 0) {
+    const currentStart = tasks[index].startHour * 60 + tasks[index].startMinute
+
+    const prevEnd =
+        index > 0
+            ? tasks[index - 1].endHour * 60 + tasks[index - 1].endMinute
+            : -Infinity
+
+    const overlap = index > 0 && currentStart < prevEnd
+
+    // overlapIndex: 0 αν δεν overlapάρει, 1 αν overlapάρει με previous
+    return overlapIndex = overlap ? overlapIndex + 1 : 0
+}

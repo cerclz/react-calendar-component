@@ -7,9 +7,9 @@ export type CalendarTask = {
     startDate: string
     endDate: string
     startHour: number
-    startMinute: string 
-    endHour: number 
-    endMinute: string
+    startMinute: number
+    endHour: number
+    endMinute: number
     store: string
     category: string
     description: string
