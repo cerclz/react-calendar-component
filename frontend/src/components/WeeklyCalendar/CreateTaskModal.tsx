@@ -9,6 +9,7 @@ type Props = {
     mode: "create" | "edit",
     formData: Omit<CalendarTask, "_id">,
     handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
+    handleTextareaChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
     onSubmit: () => void
     onUpdate: () => void
     isUpdating: boolean
@@ -33,7 +34,8 @@ export function CreateTaskModal({
     isDeleting,
     onDelete,
     isSaving,
-    isError
+    isError,
+    handleTextareaChange
 }: Props) {
 
     // Generate options for the select start and end forms
@@ -146,6 +148,14 @@ export function CreateTaskModal({
                             ))}
                         </div>
 
+                        <div>
+                            <textarea
+                                name="description"
+                                value={formData.description}
+                                onChange={handleTextareaChange}
+                                style={{ width: "96%", minHeight: "80px", marginTop: "8px", padding: "8px",  }}
+                            />
+                        </div>
 
                         <input list="stores" id="store" name="store" placeholder="Search Data" value={formData.store} onChange={handleChange} />
 
@@ -155,7 +165,7 @@ export function CreateTaskModal({
 
                         {formData.store && stores.includes(formData.store) && (
                             <div>
-                                <textarea id="comment">
+                                <textarea id="">
                                     a
                                 </textarea>
                             </div>

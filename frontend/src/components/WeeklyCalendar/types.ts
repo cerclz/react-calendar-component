@@ -12,7 +12,7 @@ export type CalendarTask = {
     endMinute: string
     store: string
     category: string
-    comments: string
+    description: string
 }
 
 export type CreateTaskDto = Omit<CalendarTask, "_id">

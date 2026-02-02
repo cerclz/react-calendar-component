@@ -16,6 +16,8 @@ type Slot = {
     hour: number
 }
 
+type FormEl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+
 type ModalMode = "create" | "edit"
 
 const EMPTY_TASK: CreateTaskDto = {
@@ -28,7 +30,7 @@ const EMPTY_TASK: CreateTaskDto = {
     endMinute: "00",
     store: '',
     category: "",
-    comments: ""
+    description: ""
 }
 
 const NUM_FIELDS = new Set(["startHour", "startMinute", "endHour", "endMinute"])
@@ -76,7 +78,7 @@ export function WeeklyCalendar() {
         setSelectedTask(task)
     }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleChange = (e: React.ChangeEvent<FormEl>) => {
         const { name, value } = e.target
 
         setTaskFormData(prev => ({
@@ -84,6 +86,11 @@ export function WeeklyCalendar() {
             [name]: NUM_FIELDS.has(name) ? Number(value) : value
 
         }))
+    }
+
+    const handleTextareaChange: React.ChangeEventHandler<HTMLTextAreaElement> = (e) => {
+        const { name, value } = e.currentTarget
+        setTaskFormData(p => ({ ...p, [name]: value }))
     }
 
     const today = () => setSelectedDate(new Date())
@@ -196,6 +203,7 @@ export function WeeklyCalendar() {
                         onDelete={onDelete}
                         isDeleting={deleteLoading}
                         isError={!!error}
+                        handleTextareaChange={handleTextareaChange}
                     />
                 </div>
             ) : (
@@ -217,6 +225,7 @@ export function WeeklyCalendar() {
                         isDeleting={deleteLoading}
                         isSaving={isLoading}
                         isError={!!error}
+                        handleTextareaChange={handleTextareaChange}
                     />
 
                 </div>
