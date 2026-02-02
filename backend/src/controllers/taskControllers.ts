@@ -12,6 +12,11 @@ import { Task } from "../models/Task.js"
  * @returns Array of calendar tasks within the given date range
  */
 
+const toInt = (v: unknown) => {
+    const n = Number(v)
+    return Number.isInteger(n) ? n : null
+}
+
 export const getTasks = async (req: Request, res: Response) => {
     try {
         const from = typeof req.query.from === "string" ? req.query.from : undefined
@@ -44,21 +49,35 @@ export const createTask = async (req: Request, res: Response) => {
     console.log(req.body)
     const { title, startDate, endDate, startHour, endHour, startMinute, endMinute, category, description } = req.body
 
-    if (!title || !startDate || !endDate || !startHour || !endHour || !startMinute || !endMinute || !category) {
+    if (!title || !startDate || !endDate || !category) {
         return res.status(400).json("All fields are required")
+    }
+
+    const sh = toInt(startHour)
+    const eh = toInt(endHour)
+    const sm = toInt(startMinute)
+    const em = toInt(endMinute)
+
+    if (
+        sh === null || sh < 0 || sh > 23 ||
+        eh === null || eh < 0 || eh > 23 ||
+        sm === null || sm < 0 || sm > 59 ||
+        em === null || em < 0 || em > 59
+    ) {
+        return res.status(400).json({ message: "Invalid time values" })
     }
 
     try {
         const task = await Task.create({
-            title,
+            title: title.trim(),
             startDate,
             endDate,
-            startHour,
-            endHour,
-            startMinute,
-            endMinute,
-            category,
-            description
+            startHour: sh,
+            endHour: eh,
+            startMinute: sm,
+            endMinute: em,
+            category: category.trim(),
+            description,
         })
 
         if (task) {
@@ -101,11 +120,6 @@ export const updateTask = async (req: Request, res: Response) => {
 
     if (!title || !startDate || !endDate || !category) {
         return res.status(400).json("All fields are required")
-    }
-
-    const toInt = (v: unknown) => {
-        const n = Number(v)
-        return Number.isInteger(n) ? n : null
     }
 
     const sh = toInt(startHour)
