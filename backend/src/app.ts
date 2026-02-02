@@ -3,6 +3,8 @@ import express from "express"
 import cors from "cors"
 import { connectDB } from "./config/dbConnection.js"
 import taskRoutes from "./routes/taskRoutes.js"
+import storeRoutes from "./routes/storeRoutes.js"
+
 
 const app = express()
 
@@ -17,6 +19,7 @@ if (!MONGODB_URI) {
 }
 
 app.use('/api/tasks', taskRoutes)
+app.use('/api/stores', storeRoutes)
 
 console.log("Starting server...")
 
