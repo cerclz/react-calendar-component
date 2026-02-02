@@ -15,6 +15,7 @@ type Props = {
     isUpdating: boolean
     onDelete: () => void
     isDeleting: boolean
+    deleteError?: boolean
     isSaving: boolean
     isError: boolean
 }
@@ -35,7 +36,8 @@ export function CreateTaskModal({
     onDelete,
     isSaving,
     isError,
-    handleTextareaChange
+    handleTextareaChange,
+    deleteError
 }: Props) {
 
     // Generate options for the select start and end forms
@@ -153,7 +155,7 @@ export function CreateTaskModal({
                                 name="description"
                                 value={formData.description}
                                 onChange={handleTextareaChange}
-                                style={{ width: "96%", minHeight: "80px", marginTop: "8px", padding: "8px",  }}
+                                style={{ width: "96%", minHeight: "80px", marginTop: "8px", padding: "8px", }}
                             />
                         </div>
 
@@ -208,9 +210,9 @@ export function CreateTaskModal({
                             </button>
 
                             <button
-                            type="button"
-                            onClick={onUpdate}
-                            disabled={isUpdating}
+                                type="button"
+                                onClick={onUpdate}
+                                disabled={isUpdating}
                                 style={{
                                     backgroundColor: "#1E90FF",
                                     border: "none",
@@ -262,6 +264,8 @@ export function CreateTaskModal({
                         </div>
                     }
                     {isError ? <div style={{ color: "crimson" }}>Create failed</div> : null}
+                    {deleteError ? <div style={{ color: "crimson" }}>Delete failed</div> : null}
+
                 </form>
             </div>
         </div>

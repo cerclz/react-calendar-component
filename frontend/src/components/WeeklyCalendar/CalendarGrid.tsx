@@ -11,9 +11,10 @@ type Props = {
     onTaskClick: (task: CalendarTask) => void
     tasksLoading?: boolean
     isError?: boolean
+    selectDayView: (date: Date) => void
 }
 
-const CalendarGrid = ({ week, onSlotClick, onTaskClick, tasksLoading, isError }: Props) => {
+const CalendarGrid = ({ week, onSlotClick, onTaskClick, tasksLoading, isError, selectDayView }: Props) => {
 
     return (
         /**
@@ -35,9 +36,14 @@ const CalendarGrid = ({ week, onSlotClick, onTaskClick, tasksLoading, isError }:
              * Highlighting Current Day
             */}
             {week.days.map((day, i) => (
-                <div
+                <button
+                onClick={() => selectDayView(day.date)}
                     key={day.isoDate}
                     style={{
+                        backgroundColor: "transparent",
+                        cursor: "pointer",
+                        borderTop: "none",
+                        borderBottom: "1px solid #bdbdbd",
                         gridColumn: i + 1,
                         gridRow: 1,
                         height: HEADER_HEIGHT,
@@ -72,7 +78,7 @@ const CalendarGrid = ({ week, onSlotClick, onTaskClick, tasksLoading, isError }:
                     >
                         {getCurrentDay(day.date.getDay()).slice(0, 3).toUpperCase()}
                     </div>
-                </div>
+                </button>
             ))}
 
             {/**

@@ -51,6 +51,11 @@ export function WeeklyCalendar() {
     const [taskFormData, setTaskFormData] = useState<CreateTaskDto>(EMPTY_TASK)
     const [selectedTask, setSelectedTask] = useState<CalendarTask | null>(null)
 
+    const selectDayView = (date: Date) => {
+        setViewMode("day")
+        setSelectedDate(date)
+    }
+
     const openCreateModal = (slot: Slot) => {
         setSelectedSlot(slot)
         setModalMode("create")
@@ -148,7 +153,7 @@ export function WeeklyCalendar() {
      * Delete Task Implementation 
      */
 
-    const [deleteTask, { isLoading: deleteLoading, error: deleteError }] = useDeleteTaskMutation()
+    const [deleteTask, { isLoading: deleteLoading, isError: deleteError }] = useDeleteTaskMutation()
 
     const onDelete = async () => {
         try {
@@ -187,6 +192,7 @@ export function WeeklyCalendar() {
                         onTaskClick={onTaskEdit}
                         tasksLoading={tasksLoading}
                         isError={!!tasksError}
+                        selectDayView={selectDayView}
                     />
 
                     <CreateTaskModal
@@ -202,6 +208,7 @@ export function WeeklyCalendar() {
                         onUpdate={onUpdate}
                         onDelete={onDelete}
                         isDeleting={deleteLoading}
+                        deleteError={deleteError}
                         isError={!!error}
                         handleTextareaChange={handleTextareaChange}
                     />
@@ -229,6 +236,7 @@ export function WeeklyCalendar() {
                         onUpdate={onUpdate}
                         onDelete={onDelete}
                         isDeleting={deleteLoading}
+                        deleteError={deleteError}
                         isSaving={isLoading}
                         isError={!!error}
                         handleTextareaChange={handleTextareaChange}
