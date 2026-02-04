@@ -1,48 +1,53 @@
+import { useMemo } from "react"
+import { TwoColumn } from "../../layouts/TwoColumn/TwoColumn"
+import { Table, type ColumnDef } from "../../components/Table/Table"
+import type { Store } from "./stores.types"
 
 type Props = {
-    stores: any[]
+    stores: Store[]
     isLoading: boolean
     error: any
 }
 
 const StoreList = ({ stores, isLoading, error }: Props) => {
-    if (isLoading) {
-        return <div>Loading stores...</div>;
-    }
+  const columns = useMemo<ColumnDef<Store>[]>(
+    () => [
+      { header: "Store Name", accessor: "name" },
+      { header: "Region", accessor: "region" },
+      { header: "Address", accessor: "address" },
+      {
+        header: "Actions",
+        cell: () => (
+          <div style={{ display: "flex", gap: 8 }}>
+            <button>Edit</button>
+            <button>Delete</button>
+          </div>
+        ),
+        width: 160,
+      },
+    ],
+    []
+  )
 
-    if (error) {
-        return <div>Error loading stores: {error.message}</div>;
-    }
-
-    return (
-        <div className="container-fluid">
-            <div className="table-wrapper has-sticky">
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th>Store Name</th>
-                            <th>Region</th>
-                            <th>Address</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {stores.map((store) => (
-                            <tr key={store._id}>
-                                <td>{store.name}</td>
-                                <td>{store.region}</td>
-                                <td>{store.address}</td>
-                                <td>
-                                    <button>Edit</button>
-                                    <button>Delete</button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+  return (
+    <TwoColumn
+      left={
+        <div style={{ display: "grid", gap: 10 }}>
+          <button onClick={() => console.log("open create")}>+ Προσθήκη</button>
         </div>
-    )
+      }
+      right={
+        <Table
+          data={stores}
+          columns={columns}
+          getRowKey={(s) => s._id}
+          isLoading={isLoading}
+          error={error}
+          emptyText="No stores found"
+        />
+      }
+    />
+  )
 }
 
 export default StoreList

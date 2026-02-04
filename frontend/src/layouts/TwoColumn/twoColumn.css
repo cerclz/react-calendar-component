@@ -1,0 +1,23 @@
+.two-col {
+    display: grid;
+    grid-template-columns: var(--left) 1fr;
+    gap: var(--gap);
+    width: 100%;
+    align-items: start;
+
+}
+
+.two-col-left {
+    border-right: 1px solid #dee2e6;
+    background: #fff;
+    padding: 12px;
+    height: 100vh;
+}
+
+.two-col-right {
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 16px;
+    min-width: 0;
+}
