@@ -53,3 +53,63 @@ input:hover {
   background-color: rgb(226, 226, 226);
   outline: none;
 }
+
+.container-fluid {
+  width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+.table-wrapper {
+  width: 100%;
+  border: 1px solid #dee2e6;
+  border-radius: 20px;
+  overflow: auto; 
+  background: #fff;
+}
+
+.table-wrapper.has-sticky {
+  max-height: 70vh;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.table th,
+.table td {
+  padding: 12px 14px;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.table th:not(:last-child),
+.table td:not(:last-child) {
+  border-right: 1px solid #dee2e6;
+}
+
+.table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #f8f9fa;
+  font-weight: 600;
+}
+
+.table tbody tr:hover td {
+  background-color: #f1f3f5;
+}
+
+.table tbody tr:nth-child(even) td{
+  background-color: #fafafa;
+}
+
+.table tbody tr:hover td {
+  transition: background 0.15s ease-in-out;
+}
