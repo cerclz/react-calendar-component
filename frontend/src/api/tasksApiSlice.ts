@@ -1,7 +1,7 @@
 // tasksApiSlice.ts
 
+import type { CalendarTask } from "../features/WeeklyCalendar/types";
 import { apiSlice } from "./apiSlice";
-import type { CalendarTask } from "../components/WeeklyCalendar/types";
 
 export type CreateTaskDto = Omit<CalendarTask, "_id">
 export type GetTaskArgs = {
