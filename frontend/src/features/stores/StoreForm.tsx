@@ -1,4 +1,5 @@
 type FormEl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+import { useNavigate } from "react-router-dom"
 import type { CreateStoreDto } from "./stores.types"
 
 type Props = {
@@ -7,9 +8,12 @@ type Props = {
   onChange: (e: React.ChangeEvent<FormEl>) => void
   isLoading: boolean
   error: any
+  mode: "create" | "edit",
 }
 
-const StoreForm = ({ onSubmit, formData, onChange, isLoading, error }: Props) => {
+const StoreForm = ({ onSubmit, formData, onChange, isLoading, error, mode }: Props) => {
+
+  const navigate = useNavigate()
   return (
     <div className="container column justify-center items-center">
 
@@ -60,7 +64,8 @@ const StoreForm = ({ onSubmit, formData, onChange, isLoading, error }: Props) =>
           <input type="text" name="phone" placeholder="Phone Number" value={formData.contactDetails.phone} onChange={onChange}  ></input>
         </div>
 
-        <button type="submit">Submit</button>
+        <button type="submit">{mode === "create" ? "Create Store" : "Update Store"}</button>
+        <button type="button" onClick={() => navigate(-1)}>Cancel</button>
       </form>
     </div>
   )

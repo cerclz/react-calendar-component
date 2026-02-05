@@ -1,6 +1,11 @@
 import { apiSlice } from "../../api/apiSlice";
 import type { Store, CreateStoreDto } from "./stores.types";
 
+export type UpdateStoreArgs = {
+  id: string
+  body: CreateStoreDto
+}
+
 const storesApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getStores: builder.query<Store[], void>({
@@ -14,6 +19,11 @@ const storesApiSlice = apiSlice.injectEndpoints({
                     : [{ type: "Stores" as const, id: "LIST" }]
         }),
 
+        getStoreById: builder.query<Store, string>({
+            query: (id) => `/api/stores/${id}`,
+            providesTags: (result, error, id) => [{ type: "Stores", id }],
+        }),
+
         createStore: builder.mutation<Store, CreateStoreDto>({
             query: (body) => ({
                 url: "/api/stores",
@@ -21,6 +31,18 @@ const storesApiSlice = apiSlice.injectEndpoints({
                 body,
             }),
             invalidatesTags: [{ type: "Stores", id: "LIST" }]
+        }),
+
+        updateStore: builder.mutation<Store, UpdateStoreArgs>({
+            query: ({ id, body }) => ({
+                url: `/api/stores/${id}`,
+                method: "PUT",
+                body,
+            }),
+            invalidatesTags: (_result, _error, arg) => [
+                { type: "Stores", id: arg.id },
+                { type: "Stores", id: "LIST" },
+            ],
         }),
 
         deleteStore: builder.mutation<{ message: string }, { id: string }>({
@@ -37,4 +59,4 @@ const storesApiSlice = apiSlice.injectEndpoints({
     })
 });
 
-export const { useGetStoresQuery, useCreateStoreMutation, useDeleteStoreMutation } = storesApiSlice;
+export const { useGetStoresQuery, useGetStoreByIdQuery, useCreateStoreMutation, useUpdateStoreMutation, useDeleteStoreMutation } = storesApiSlice;

@@ -14,6 +14,38 @@ export const getStores = async (req: Request, res: Response) => {
     }
 }
 
+
+/**
+ * @desc    Get single store
+ * @route   GET /api/stores/:id 
+ * @access  Private
+ */
+
+export const getStoreById = async (req: Request, res: Response) => {
+    const { id } = req.params
+
+    if (!id || typeof id !== "string") {
+        return res.status(400).json({ message: "Store id is required" })
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "Invalid store id" })
+    }
+
+    try {
+        const store = await Store.findById(id).lean()
+
+        if (!store) {
+            return res.status(404).json({ message: "Store not found" })
+        }
+
+        return res.status(200).json(store)
+    } catch (e) {
+        console.error("Error fetching store", e)
+        return res.status(500).json({ message: "Error fetching store" })
+    }
+}
+
 export const createStore = async (req: Request, res: Response) => {
     const { name, region, address, contactDetails, comments } = req.body
     if (!name || !region || !address) {
@@ -36,6 +68,52 @@ export const createStore = async (req: Request, res: Response) => {
         console.error(`Error creating new store ${e}`)
         res.status(400).json({ message: `Error creating new store ${e}` })
     }
+}
+
+/**
+ * @desc    Update a store
+ * @route   PATCH /api/stores/:id
+ * @access  Private
+ */
+
+export const updateStore = async (req: Request, res: Response) => {
+    const { id } = req.params
+
+    if (typeof id !== "string") {
+        return res.status(400).json({ message: "Store id is required" })
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "Invalid store id" })
+    }
+
+    const { name, region, address, contactDetails, comments } = req.body
+
+    if (!name || !region || !address) {
+        return res.status(400).json("All fields are required")
+    }
+
+    try {
+        const updatedStore = await Store.findByIdAndUpdate(id, {
+            name: name.trim(),
+            region: region.trim(),
+            address: address.trim(),
+            contactDetails,
+            comments
+        },
+            {
+                new: true,
+                runValidators: true,
+            }).lean()
+
+        if (updatedStore) {
+            return res.status(200).json({ message: `Store updated: ${updateStore}` })
+        }
+    } catch (e) {
+        console.error(`Error updating Store ${e}`)
+        res.status(400).json({ message: `Error updating Store ${e}` })
+    }
+
 }
 
 /**

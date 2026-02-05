@@ -30,7 +30,7 @@ const Stores = () => {
         header: "Actions",
         cell: (row) => (
           <div style={{ display: "flex", gap: 8 }}>
-            <button>Edit</button>
+            <button onClick={() => navigate(`/stores/${row._id}/edit`)}>Edit</button>
             <button onClick={() => deleteStoreHandler(row._id)} disabled={deleteLoading} >Delete</button>
           </div>
         ),

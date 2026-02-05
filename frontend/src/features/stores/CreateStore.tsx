@@ -46,6 +46,7 @@ const CreateStore = () => {
       onChange={handleChange}
       isLoading={isLoading}
       error={error}
+      mode="create"
     />
   )
 }
