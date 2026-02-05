@@ -3,7 +3,7 @@ export type Store = {
     name: string
     region: string
     address: string
-    contactDetails: [string]
+    contactDetails: { contactName: string, email: string, phone: string }
     comments: [string]
 }
 

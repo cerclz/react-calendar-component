@@ -6,7 +6,7 @@ export type StoreType = {
     name: string
     region: string
     address: string
-    contactDetails: [string]
+    contactDetails: { contactName: string, email: string, phone: string }
     comments: [string]
 }
 
@@ -15,7 +15,11 @@ const StoreSchema = new mongoose.Schema<StoreType>(
         name: { type: String, required: true, trim: true },
         region: { type: String, required: true, trim: true },
         address: { type: String, required: true, trim: true },
-        contactDetails: { type: [String], default: [] },
+        contactDetails: {
+            contactName: { type: String, default: '' },
+            email: { type: String, default: '' },
+            phone: { type: String, default: '' }
+        },
         comments: { type: [String], default: [] }
     },
     {

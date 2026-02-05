@@ -1,5 +1,5 @@
-import { apiSlice } from "./apiSlice";
-import type { Store, CreateStoreDto } from "../components/stores/stores.types";
+import { apiSlice } from "../../api/apiSlice";
+import type { Store, CreateStoreDto } from "./stores.types";
 
 const storesApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -14,7 +14,16 @@ const storesApiSlice = apiSlice.injectEndpoints({
                     : [{ type: "Stores" as const, id: "LIST" }]
         }),
 
+        createStore: builder.mutation<Store, CreateStoreDto>({
+            query: (body) => ({
+                url: "/api/stores",
+                method: "POST",
+                body,
+            }),
+            invalidatesTags: [{ type: "Stores", id: "LIST" }]
+        }),
+
     })
 });
 
-export const { useGetStoresQuery } = storesApiSlice;
+export const { useGetStoresQuery, useCreateStoreMutation } = storesApiSlice;
