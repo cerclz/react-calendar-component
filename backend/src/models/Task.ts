@@ -12,6 +12,7 @@ export type TaskType = {
     endMinute: number
     category: string
     description: string
+    store: string
 }
 
 const TaskSchema = new mongoose.Schema<TaskType>(
@@ -24,7 +25,8 @@ const TaskSchema = new mongoose.Schema<TaskType>(
         endHour: { type: Number, required: true, min: 0, max: 23 },
         endMinute: { type: Number, required: true, min: 0, max: 59 },
         category: { type: String, default: "" },
-        description: { type: String, default: "" }
+        description: { type: String, default: "" },
+        store: {type: String, default: "", trim: true}
     },
     {
         timestamps: true

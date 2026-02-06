@@ -47,7 +47,7 @@ export const getTasks = async (req: Request, res: Response) => {
  */
 export const createTask = async (req: Request, res: Response) => {
     console.log(req.body)
-    const { title, startDate, endDate, startHour, endHour, startMinute, endMinute, category, description } = req.body
+    const { title, startDate, endDate, startHour, endHour, startMinute, endMinute, category, description, store } = req.body
 
     if (!title || !startDate || !endDate || !category) {
         return res.status(400).json("All fields are required")
@@ -78,6 +78,7 @@ export const createTask = async (req: Request, res: Response) => {
             endMinute: em,
             category: category.trim(),
             description,
+            store: store.trim()
         })
 
         if (task) {
@@ -116,6 +117,7 @@ export const updateTask = async (req: Request, res: Response) => {
         endMinute,
         category,
         description,
+        store
     } = req.body
 
     if (!title || !startDate || !endDate || !category) {
@@ -147,6 +149,7 @@ export const updateTask = async (req: Request, res: Response) => {
             endMinute: em,
             category: category.trim(),
             description,
+            store: store.trim()
         },
             {
                 new: true,

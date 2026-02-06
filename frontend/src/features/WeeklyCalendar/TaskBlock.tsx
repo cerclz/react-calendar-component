@@ -61,9 +61,14 @@ export function TaskBlock({ task, onClick, overlapIndex, showDescription = false
 
                 {showDescription && task.description && (
                     <div style={{ fontSize: 12, overflow: "hidden", textOverflow: "ellipsis" }}>
-                        {task.description}
+                        Description: {task.description}
                     </div>
                 )}
+
+                <div style={{ fontSize: 12, whiteSpace: "nowrap" }}>
+                    {task.store ? `Store: ${task.store}` : ""}
+                </div>
+
             </div>
 
         </div>

@@ -6,19 +6,16 @@ import CalendarGrid from "./CalendarGrid"
 import { DayView } from "./DayView"
 import { TimeColumn } from "./TimeColumn"
 import { getCurrentMonth } from "./date.utils"
-import { CreateTaskModal } from "./CreateTaskModal"
-import { useCreateTaskMutation, useDeleteTaskMutation, useGetTasksQuery, useUpdateTaskMutation } from "../../api/tasksApiSlice"
+import { CreateTaskModal } from "./Task"
+import { useGetTasksQuery } from "../../api/tasksApiSlice"
 
 type ViewMode = "day" | "week"
+type ModalMode = "create" | "edit"
 
 type Slot = {
     isoDate: string,
     hour: number
 }
-
-type FormEl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-
-type ModalMode = "create" | "edit"
 
 const EMPTY_TASK: CreateTaskDto = {
     title: "",
@@ -28,24 +25,19 @@ const EMPTY_TASK: CreateTaskDto = {
     startMinute: 0,
     endHour: 0,
     endMinute: 0,
-    store: '',
+    store: "",
     category: "",
     description: ""
 }
 
-const NUM_FIELDS = new Set(["startHour", "startMinute", "endHour", "endMinute"])
-
 export function WeeklyCalendar() {
-
     const [viewMode, setViewMode] = useState<ViewMode>("week")
     const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null)
-
+    // const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null)
     // Modal state for create or editing a task
     const [modalMode, setModalMode] = useState<ModalMode>("create")
-
     // Set the form for the Modal,
     // Change in onTaskEdit if there is from task
     const [taskFormData, setTaskFormData] = useState<CreateTaskDto>(EMPTY_TASK)
@@ -57,53 +49,47 @@ export function WeeklyCalendar() {
     }
 
     const openCreateModal = (slot: Slot) => {
-        setSelectedSlot(slot)
         setModalMode("create")
-        setTaskFormData({
-            ...taskFormData,
+        setSelectedTask(null)
+        setTaskFormData((prev) => ({
+            ...prev,
             startHour: slot.hour,
-            endHour: slot.hour + 1,
+            endHour: Math.min(slot.hour + 1, 23),
+            startMinute: 0,
+            endMinute: 0,
             startDate: slot.isoDate,
             endDate: slot.isoDate
-        })
+        }))
         setIsModalOpen(true)
     }
 
     const onCloseModal = () => {
         setIsModalOpen(false)
-        setSelectedSlot(null)
-        setTaskFormData(EMPTY_TASK)
+        setModalMode("create")
         setSelectedTask(null)
+        setTaskFormData(EMPTY_TASK)
     }
 
     const onTaskEdit = (task: CalendarTask) => {
-        setIsModalOpen(true)
         setModalMode("edit")
-        setTaskFormData(task)
         setSelectedTask(task)
-    }
-
-    const handleChange = (e: React.ChangeEvent<FormEl>) => {
-        const { name, value } = e.target
-
-        setTaskFormData(prev => ({
-            ...prev,
-            [name]: NUM_FIELDS.has(name) ? Number(value) : value
-
-        }))
-    }
-
-    const handleTextareaChange: React.ChangeEventHandler<HTMLTextAreaElement> = (e) => {
-        const { name, value } = e.currentTarget
-        setTaskFormData(p => ({ ...p, [name]: value }))
+        setTaskFormData({
+            title: task.title ?? "",
+            startDate: task.startDate ?? "",
+            endDate: task.endDate ?? "",
+            startHour: task.startHour ?? 0,
+            startMinute: task.startMinute ?? 0,
+            endHour: task.endHour ?? 0,
+            endMinute: task.endMinute ?? 0,
+            store: task.store ?? "",
+            category: task.category ?? "",
+            description: task.description ?? "",
+        })
+        setIsModalOpen(true)
     }
 
     const today = () => setSelectedDate(new Date())
-
-    // Go prev day if view mode is day else go prev week
     const goPrev = () => setSelectedDate(d => (viewMode === "day" ? addDays(d, -1) : addDays(d, -7)))
-
-    // Go next day if view mode is day else go next week
     const goNext = () => setSelectedDate(d => (viewMode === "day" ? addDays(d, +1) : addDays(d, 7)))
 
     /**
@@ -121,56 +107,6 @@ export function WeeklyCalendar() {
     const week = useMemo(() => buildCalendarWeek(selectedDate, tasks), [selectedDate, tasks])
     const day = useMemo(() => buildCalendarDay(selectedDate, tasks), [selectedDate, tasks])
 
-    /**
-     * Create New Task Implementation
-     */
-    const [createTask, { isLoading, error }] = useCreateTaskMutation()
-
-    const onSubmit = async () => {
-        try {
-            await createTask(taskFormData).unwrap()
-            onCloseModal()
-        } catch (e) {
-            console.error(e)
-        }
-    }
-
-    /**
-     * Update Task Implementation
-     */
-
-    const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation()
-
-    const onUpdate = async () => {
-        if (!selectedTask?._id) return
-
-        await updateTask({ id: selectedTask._id, body: taskFormData }).unwrap()
-        onCloseModal()
-    }
-
-
-    /** 
-     * Delete Task Implementation 
-     */
-
-    const [deleteTask, { isLoading: deleteLoading, isError: deleteError }] = useDeleteTaskMutation()
-
-    const onDelete = async () => {
-        try {
-            if (!selectedTask?._id) return
-
-            // optional confirm
-            const ok = window.confirm("Delete Task?")
-            if (!ok) return
-
-            await deleteTask({ id: selectedTask._id }).unwrap()
-            onCloseModal()
-        } catch (e) {
-            console.error(e)
-        }
-    }
-
-
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <CalendarHeader
@@ -180,7 +116,6 @@ export function WeeklyCalendar() {
                 onNext={goNext}
                 today={today}
                 title={getCurrentMonth(selectedDate.getMonth()) + ` ${selectedDate.getFullYear()}`}
-            // title={viewMode === "day" ? day.isoDate : `${week.days[0].isoDate} -> ${week.days[6].isoDate}`}
             />
 
             {viewMode === "week" ? (
@@ -194,24 +129,6 @@ export function WeeklyCalendar() {
                         isError={!!tasksError}
                         selectDayView={selectDayView}
                     />
-
-                    <CreateTaskModal
-                        open={isModalOpen}
-                        slot={selectedSlot}
-                        onClose={onCloseModal}
-                        mode={modalMode}
-                        formData={taskFormData}
-                        handleChange={handleChange}
-                        onSubmit={onSubmit}
-                        isSaving={isLoading}
-                        isUpdating={isUpdating}
-                        onUpdate={onUpdate}
-                        onDelete={onDelete}
-                        isDeleting={deleteLoading}
-                        deleteError={deleteError}
-                        isError={!!error}
-                        handleTextareaChange={handleTextareaChange}
-                    />
                 </div>
             ) : (
                 <div style={{ display: "grid", gridTemplateColumns: "56px 1fr" }}>
@@ -223,28 +140,17 @@ export function WeeklyCalendar() {
                         tasksLoading={tasksLoading}
                         isError={!!tasksError}
                     />
-
-                    <CreateTaskModal
-                        open={isModalOpen}
-                        slot={selectedSlot}
-                        onClose={onCloseModal}
-                        mode={modalMode}
-                        formData={taskFormData}
-                        handleChange={handleChange}
-                        onSubmit={onSubmit}
-                        isUpdating={isUpdating}
-                        onUpdate={onUpdate}
-                        onDelete={onDelete}
-                        isDeleting={deleteLoading}
-                        deleteError={deleteError}
-                        isSaving={isLoading}
-                        isError={!!error}
-                        handleTextareaChange={handleTextareaChange}
-                    />
-
                 </div>
             )}
 
+            <CreateTaskModal
+                open={isModalOpen}
+                mode={modalMode}
+                selectedTask={selectedTask}
+                formData={taskFormData}
+                setFormData={setTaskFormData}
+                onClose={onCloseModal}
+            />
         </div>
     )
 }

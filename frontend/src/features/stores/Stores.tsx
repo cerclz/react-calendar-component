@@ -9,7 +9,7 @@ const Stores = () => {
   const { data: stores = [], isLoading, error } = useGetStoresQuery()
   const navigate = useNavigate()
 
-  const [deleteStore, { isLoading: deleteLoading, isError: deleteError }] = useDeleteStoreMutation()
+  const [deleteStore, { isLoading: deleteLoading }] = useDeleteStoreMutation()
 
   const deleteStoreHandler = async (id: string) => {
     try {
