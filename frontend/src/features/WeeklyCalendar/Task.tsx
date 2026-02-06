@@ -84,8 +84,34 @@ export function CreateTaskModal({
 
     const onSave = async () => {
         try {
-            if (isNewStore) {
-                await createStore(newStoreDataWithName).unwrap()
+            const typedStoreName = formData.store?.trim()
+            const description = formData.description?.trim()
+
+            if (typedStoreName) {
+                const existingStore = stores.find((s) => s.name === typedStoreName)
+
+                if (existingStore) {
+                    const nextComments = description
+                        ? [...(existingStore.comments ?? []), description]
+                        : existingStore.comments ?? []
+
+                    await updateStore({
+                        id: existingStore._id,
+                        body: {
+                            name: existingStore.name,
+                            region: existingStore.region,
+                            address: existingStore.address,
+                            contactDetails: existingStore.contactDetails,
+                            comments: nextComments,
+                        },
+                    }).unwrap()
+                } else {
+                    await createStore({
+                        ...newStoreDataWithName,
+                        name: typedStoreName,
+                        comments: description ? [description] : [],
+                    }).unwrap()
+                }
             }
 
             if (isEdit) {
@@ -94,11 +120,13 @@ export function CreateTaskModal({
             } else {
                 await createTask(formData).unwrap()
             }
+
             onClose()
         } catch (e) {
             console.error(e)
         }
     }
+
 
     const onDelete = async () => {
         try {
